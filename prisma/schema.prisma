@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_URI")
+}
+
+model Log {
+  id        Int      @id @default(autoincrement())
+  action    String // "create", "update", "delete"
+  entity    String // "news", "document", "user"
+  entityId  BigInt // Изменяем на BigInt для совместимости с другими моделями
+  userId    BigInt // Изменяем на BigInt для совместимости с Users
+  timestamp DateTime @default(now())
+  details   Json? // Опциональные детали: { "changes": { "old": "...", "new": "..." } }
+
+  // ← НОВАЯ СВЯЗЬ с Users
+  user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("logs")
+}
+
+model Documents {
+  id          BigInt         @id @default(autoincrement())
+  title       String?
+  type_id     BigInt
+  description String?
+  file_url    String?
+  created_at  DateTime       @default(now())
+  type        DocumentsTypes @relation(fields: [type_id], references: [id])
+}
+
+model DocumentsTypes {
+  id        BigInt      @id @default(autoincrement())
+  type      String      @unique
+  documents Documents[]
+}
+
+model News {
+  id          BigInt    @id @default(autoincrement())
+  type_id     BigInt
+  title       String?
+  description String?
+  image_url   String?
+  created_at  DateTime  @default(now())
+  type        NewsTypes @relation(fields: [type_id], references: [id])
+}
+
+model NewsTypes {
+  id   BigInt @id @default(autoincrement())
+  type String @unique
+  news News[]
+
+  @@map("NewsTypes")
+}
+
+model RolesTypes {
+  id    BigInt  @id @default(autoincrement())
+  role  String  @unique
+  users Users[]
+}
+
+model StatusesTypes {
+  id     BigInt  @id @default(autoincrement())
+  status String  @unique
+  users  Users[]
+}
+
+model Users {
+  id            BigInt        @id @default(autoincrement())
+  username      String        @unique
+  password      String
+  name          String
+  role_id       BigInt        @default(1)
+  status_id     BigInt        @default(1)
+  last_activity DateTime      @default(now())
+  created_at    DateTime      @default(now())
+  role          RolesTypes    @relation(fields: [role_id], references: [id])
+  status        StatusesTypes @relation(fields: [status_id], references: [id])
+
+  // ← НОВАЯ ОБРАТНАЯ СВЯЗЬ с Log
+  logs Log[]
+}
