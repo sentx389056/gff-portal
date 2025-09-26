@@ -18,6 +18,7 @@ COPY .env ./
 
 # Шаг 7: Генерируем Prisma Client
 RUN npx prisma generate
+RUN npx prisma db push
 
 # Шаг 8: Копируем остальной код
 COPY . .
