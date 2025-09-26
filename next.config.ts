@@ -1,3 +1,4 @@
+// next.config.ts
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
@@ -9,25 +10,31 @@ const nextConfig: NextConfig = {
         ignoreDuringBuilds: true,
     },
     experimental: {
-        // Для Next.js 15, оставить пустым, если нет специфичных экспериментальных настроек
+        // Для Next.js 15
     },
 
-    // Настройка для динамических файлов (изображения)
+    // КРИТИЧНО: Настройка для динамических файлов
     images: {
         remotePatterns: [
             {
                 protocol: 'http',
                 hostname: 'localhost',
-                port: '3001', // Основной порт для разработки
+                port: '3000',
+                pathname: '/uploads/**', // ← Все изображения из uploads
+            },
+            {
+                protocol: 'http',
+                hostname: 'localhost',
+                port: '3001', // Если другой порт
                 pathname: '/uploads/**',
             },
             {
                 protocol: 'https',
-                hostname: '**', // Для продакшена (поддержка любых доменов)
+                hostname: '**', // Production
                 pathname: '/uploads/**',
             },
         ],
-        // Разрешить небезопасные URL для dev
+        // ВАЖНО: Разрешить небезопасные URL для dev
         unoptimized: true,
     },
 
@@ -45,7 +52,7 @@ const nextConfig: NextConfig = {
         ]
     },
 
-    // Заголовки для статических файлов
+    // Копируем public/uploads в билд
     async headers() {
         return [
             {
@@ -57,25 +64,19 @@ const nextConfig: NextConfig = {
                     },
                     {
                         key: 'Content-Type',
-                        value: 'image/*', // Для изображений, можно уточнить при необходимости
+                        value: 'image/*', // Или application/* для документов
                     },
                 ],
             },
         ]
     },
 
-    // Пакеты для транспиляции
     transpilePackages: [
         'lucide-react',
         'class-variance-authority',
         'clsx',
         'tailwind-merge',
     ],
-
-    // Указываем порт через переменную окружения или явно
-    env: {
-        PORT: process.env.PORT || '3001', // Убедитесь, что PORT совпадает с Docker Compose
-    },
 }
 
 export default nextConfig
