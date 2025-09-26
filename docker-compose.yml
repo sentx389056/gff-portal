@@ -34,7 +34,7 @@ services:
              npx prisma db seed &&
              npm run start"
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:3001 || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
