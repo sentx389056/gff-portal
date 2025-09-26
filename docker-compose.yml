@@ -1,22 +1,4 @@
 services:
-  db:
-    container_name: postgres
-    image: postgres:17
-    restart: always
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
   app:
     build: .
     container_name: next_app
@@ -25,9 +7,6 @@ services:
       - "3001:3001"
     env_file:
       - .env
-    depends_on:
-      db:
-        condition: service_healthy
     command: >
       sh -c "sleep 5 &&
              npx prisma db push &&
@@ -39,6 +18,3 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-
-volumes:
-  postgres_data:
