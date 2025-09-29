@@ -30,4 +30,5 @@ EXPOSE 3000
 
 # Шаг 11: Запускаем приложение
 # Миграции и сидирование перенесены в docker-compose.yml
+ENV HOST=0.0.0.0
 CMD ["npm", "run", "start"]
