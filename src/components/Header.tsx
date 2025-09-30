@@ -65,7 +65,7 @@ export default function Header() {
     }
 
     return (
-        <header className="flex mx-auto px-6 h-23 w-full items-center justify-between shadow-md">
+        <header className="grid grid-cols-3 px-6 h-23 w-full items-center shadow-md">
             <Sheet>
                 <Link href="/" className="flex items-center gap-4">
                     <Image
@@ -90,7 +90,7 @@ export default function Header() {
                         <Link className="text-slate-500" href="/archive">Архив</Link>
                     </div>
                 </div>
-                <div className="hidden xl:flex items-center gap-[12px] relative">
+                <div className="hidden xl:flex items-center justify-end gap-[12px] relative">
                     {isAdmin && <AdminPanel />}
                     {status === "authenticated" && (
                         <div className="flex items-center gap-2">
