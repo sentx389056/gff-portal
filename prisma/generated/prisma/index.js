@@ -35,12 +35,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.14.0
- * Query Engine version: 717184b7b35ea05dfa71a3236b7af656013e1e49
+ * Prisma Client JS version: 6.16.2
+ * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
  */
 Prisma.prismaVersion = {
-  client: "6.14.0",
-  engine: "717184b7b35ea05dfa71a3236b7af656013e1e49"
+  client: "6.16.2",
+  engine: "1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
 }
 
 Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
@@ -200,10 +200,11 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\jurtsev.m\\Desktop\\gff-portal\\prisma\\generated\\prisma",
+      "value": "C:\\Users\\Senti\\OneDrive\\Desktop\\gff-portal\\prisma\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
+      "seed": "node prisma/seed.cjs",
       "engineType": "library"
     },
     "binaryTargets": [
@@ -214,7 +215,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\jurtsev.m\\Desktop\\gff-portal\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\Senti\\OneDrive\\Desktop\\gff-portal\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -222,13 +223,13 @@ const config = {
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../..",
-  "clientVersion": "6.14.0",
-  "engineVersion": "717184b7b35ea05dfa71a3236b7af656013e1e49",
+  "clientVersion": "6.16.2",
+  "engineVersion": "1c57fdcd7e44b29b9313256c76699e91c3ac3c43",
   "datasourceNames": [
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": true,
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -237,8 +238,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"POSTGRES_URI\")\n}\n\nmodel Log {\n  id        Int      @id @default(autoincrement())\n  action    String // \"create\", \"update\", \"delete\"\n  entity    String // \"news\", \"document\", \"user\"\n  entityId  BigInt // Изменяем на BigInt для совместимости с другими моделями\n  userId    BigInt // Изменяем на BigInt для совместимости с Users\n  timestamp DateTime @default(now())\n  details   Json? // Опциональные детали: { \"changes\": { \"old\": \"...\", \"new\": \"...\" } }\n\n  // ← НОВАЯ СВЯЗЬ с Users\n  user Users @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"logs\")\n}\n\nmodel Documents {\n  id          BigInt         @id @default(autoincrement())\n  title       String?\n  type_id     BigInt\n  description String?\n  file_url    String?\n  created_at  DateTime       @default(now())\n  type        DocumentsTypes @relation(fields: [type_id], references: [id])\n}\n\nmodel DocumentsTypes {\n  id        BigInt      @id @default(autoincrement())\n  type      String      @unique\n  documents Documents[]\n}\n\nmodel News {\n  id          BigInt    @id @default(autoincrement())\n  type_id     BigInt\n  title       String?\n  description String?\n  image_url   String?\n  created_at  DateTime  @default(now())\n  type        NewsTypes @relation(fields: [type_id], references: [id])\n}\n\nmodel NewsTypes {\n  id   BigInt @id @default(autoincrement())\n  type String @unique\n  news News[]\n\n  @@map(\"NewsTypes\")\n}\n\nmodel RolesTypes {\n  id    BigInt  @id @default(autoincrement())\n  role  String  @unique\n  users Users[]\n}\n\nmodel StatusesTypes {\n  id     BigInt  @id @default(autoincrement())\n  status String  @unique\n  users  Users[]\n}\n\nmodel Users {\n  id            BigInt        @id @default(autoincrement())\n  username      String        @unique\n  password      String\n  name          String\n  role_id       BigInt        @default(1)\n  status_id     BigInt        @default(1)\n  last_activity DateTime      @default(now())\n  created_at    DateTime      @default(now())\n  role          RolesTypes    @relation(fields: [role_id], references: [id])\n  status        StatusesTypes @relation(fields: [status_id], references: [id])\n\n  // ← НОВАЯ ОБРАТНАЯ СВЯЗЬ с Log\n  logs Log[]\n}\n",
-  "inlineSchemaHash": "6b3c89f10705616302fc291f1317cbcdba4a99dc2074c5416d5a2166bb243e05",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/prisma\"\n  seed     = \"node prisma/seed.cjs\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"POSTGRES_URI\")\n}\n\nmodel Log {\n  id        Int      @id @default(autoincrement())\n  action    String // \"create\", \"update\", \"delete\"\n  entity    String // \"news\", \"document\", \"user\"\n  entityId  BigInt // Изменяем на BigInt для совместимости с другими моделями\n  userId    BigInt // Изменяем на BigInt для совместимости с Users\n  timestamp DateTime @default(now())\n  details   Json? // Опциональные детали: { \"changes\": { \"old\": \"...\", \"new\": \"...\" } }\n\n  // ← НОВАЯ СВЯЗЬ с Users\n  user Users @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"logs\")\n}\n\nmodel Documents {\n  id          BigInt         @id @default(autoincrement())\n  title       String?\n  type_id     BigInt\n  description String?\n  file_url    String?\n  created_at  DateTime       @default(now())\n  type        DocumentsTypes @relation(fields: [type_id], references: [id])\n}\n\nmodel DocumentsTypes {\n  id        BigInt      @id @default(autoincrement())\n  type      String      @unique\n  documents Documents[]\n}\n\nmodel News {\n  id          BigInt    @id @default(autoincrement())\n  type_id     BigInt\n  title       String?\n  description String?\n  image_url   String?\n  created_at  DateTime  @default(now())\n  type        NewsTypes @relation(fields: [type_id], references: [id])\n}\n\nmodel NewsTypes {\n  id   BigInt @id @default(autoincrement())\n  type String @unique\n  news News[]\n\n  @@map(\"NewsTypes\")\n}\n\nmodel RolesTypes {\n  id    BigInt  @id @default(autoincrement())\n  role  String  @unique\n  users Users[]\n}\n\nmodel StatusesTypes {\n  id     BigInt  @id @default(autoincrement())\n  status String  @unique\n  users  Users[]\n}\n\nmodel Users {\n  id            BigInt        @id @default(autoincrement())\n  username      String        @unique\n  password      String\n  name          String\n  role_id       BigInt        @default(1)\n  status_id     BigInt        @default(1)\n  last_activity DateTime      @default(now())\n  created_at    DateTime      @default(now())\n  role          RolesTypes    @relation(fields: [role_id], references: [id])\n  status        StatusesTypes @relation(fields: [status_id], references: [id])\n\n  // ← НОВАЯ ОБРАТНАЯ СВЯЗЬ с Log\n  logs Log[]\n}\n",
+  "inlineSchemaHash": "221bd1b01a54ac6cc8587022755464c60dee3bbe671bc656ff1fc336238ad4eb",
   "copyEngine": true
 }
 

@@ -1,6 +1,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "./generated/prisma"
+  seed     = "node prisma/seed.cjs"
 }
 
 datasource db {

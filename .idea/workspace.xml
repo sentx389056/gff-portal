@@ -1,7 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c659873-7cc6-48e9-b798-286e2bf84ca5" name="Changes" comment="" />
+    <list default="true" id="8c659873-7cc6-48e9-b798-286e2bf84ca5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/prisma/seed.cjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gff-portal.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/client.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/client.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/default.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/default.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/edge.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/edge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/index-browser.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/index-browser.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/index.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/index.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/query_engine-windows.dll.node" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/query_engine-windows.dll.node" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/query_engine_bg.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/query_engine_bg.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/runtime/edge-esm.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/runtime/edge-esm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/runtime/edge.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/runtime/edge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/runtime/index-browser.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/runtime/index-browser.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/runtime/library.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/runtime/library.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/runtime/react-native.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/runtime/react-native.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/runtime/wasm-compiler-edge.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/runtime/wasm-compiler-edge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/runtime/wasm-engine-edge.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/runtime/wasm-engine-edge.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/wasm-edge-light-loader.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/wasm-edge-light-loader.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/wasm-worker-loader.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/wasm-worker-loader.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/wasm.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/wasm.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/generated/prisma/wasm.js" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/generated/prisma/wasm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/seed.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/seeds/documentsTypes.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/seeds/newsTypes.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/seeds/rolesTypes.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/seeds/statusesTypes.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/seeds/users.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Footer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Footer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,10 +54,22 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 4
-}]]></component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;sentx38&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/sentx389056/gff-portal.git&quot;,
+    &quot;accountId&quot;: &quot;2ba0374a-f426-4334-a778-366c1f578270&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="33MpITOV2SxUJlEjm8HbtKrtIJr" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -23,13 +79,17 @@
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
     "js.debugger.nextJs.config.created.client": "true",
     "js.debugger.nextJs.config.created.server": "true",
     "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "C:\\Users\\Senti\\OneDrive\\Desktop\\gff-portal\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
@@ -56,7 +116,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-WS-252.25557.126" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-WS-252.26199.162" />
       </set>
     </attachedChunks>
   </component>
@@ -68,10 +128,23 @@
       <option name="presentableId" value="Default" />
       <updated>1759136723643</updated>
       <workItem from="1759136728576" duration="767000" />
+      <workItem from="1765030853378" duration="637000" />
+      <workItem from="1765172609996" duration="9030000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
