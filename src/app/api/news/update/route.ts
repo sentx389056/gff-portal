@@ -1,21 +1,23 @@
 // app/api/news/update/route.ts
-import { NextResponse } from "next/server"
-import { PrismaClient } from "../../../../../prisma/generated/prisma"
-import { logEvent, LogAction, LogEntity } from "@/lib/logger"
+import { NextResponse } from "next/server";
+import { PrismaClient } from "../../../../../prisma/generated/prisma";
+import { logEvent, LogAction, LogEntity } from "@/lib/logger";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { deleteFile } from "@/lib/file-utils"; // ← Добавляем импорт
+import type { Session } from "next-auth";
 
-// Типы для запроса
 interface NewsUpdateRequest {
     id: string;
     title?: string;
     type_id?: string;
     description?: string;
-    image_url?: string;
+    image_url?: string | null; // ← Разрешаем null (удаление изображения)
 }
 
-// Типы для изменений
 interface FieldChange {
     old: string | null;
-    new: string;
+    new: string | null;
 }
 
 interface UpdateChanges {
@@ -25,7 +27,6 @@ interface UpdateChanges {
     image_url?: FieldChange;
 }
 
-// Тип для ответа
 interface NewsUpdateResponse {
     id: string;
     title: string;
@@ -36,21 +37,62 @@ interface NewsUpdateResponse {
     image_url: string | null;
 }
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
+
+// Конвертация BigInt → string
+const bigIntToString = (value: bigint): string => value.toString();
+
+// Получение пользователя из сессии
+const getUserInfoFromSession = async (): Promise<{ userId: bigint; username: string }> => {
+    try {
+        const session = await getServerSession(authOptions) as Session | null;
+        if (!session?.user?.id) {
+            return { userId: BigInt(0), username: "anonymous" };
+        }
+        const userId = BigInt(session.user.id);
+        const username = session.user.username || session.user.name || "unknown";
+        return { userId, username };
+    } catch (error) {
+        console.error("Error getting user from session:", error);
+        return { userId: BigInt(0), username: "anonymous" };
+    }
+};
+
+// Безопасное логирование (не ломает основной процесс)
+const safeLogEvent = async (
+    action: LogAction,
+    entity: LogEntity,
+    entityId: bigint,
+    userId: bigint,
+    username: string,
+    details?: Record<string, unknown>
+) => {
+    try {
+        await logEvent({
+            action,
+            entity,
+            entityId,
+            userId,
+            username,
+            details: details || null,
+        });
+    } catch (logError) {
+        console.error("Failed to log event:", logError);
+    }
+};
 
 export async function POST(request: Request): Promise<NextResponse<NewsUpdateResponse | { error: string }>> {
     let requestData: NewsUpdateRequest | null = null;
 
     try {
         requestData = await request.json() as NewsUpdateRequest;
-
         const { id, title, type_id, description, image_url } = requestData;
 
         if (!id) {
-            return NextResponse.json({ error: "ID новости обязателен" }, { status: 400 })
+            return NextResponse.json({ error: "ID новости обязателен" }, { status: 400 });
         }
 
-        // Проверяем существование новости
+        // Находим текущую новость
         const existingNews = await prisma.news.findUnique({
             where: { id: parseInt(id) },
             select: {
@@ -60,47 +102,59 @@ export async function POST(request: Request): Promise<NextResponse<NewsUpdateRes
                 description: true,
                 image_url: true,
             }
-        })
+        });
 
         if (!existingNews) {
-            return NextResponse.json({ error: "Новость не найдена" }, { status: 404 })
+            return NextResponse.json({ error: "Новость не найдена" }, { status: 404 });
         }
 
-        // Подготавливаем данные для обновления
-        const updateData = {
+        // Формируем изменения для лога
+        const changes: UpdateChanges = {};
+        if (title !== undefined && title !== existingNews.title) {
+            changes.title = { old: existingNews.title || null, new: title };
+        }
+        if (type_id !== undefined && parseInt(type_id) !== existingNews.type_id) {
+            changes.type_id = { old: existingNews.type_id.toString(), new: type_id };
+        }
+        if (description !== undefined && description !== existingNews.description) {
+            changes.description = { old: existingNews.description || null, new: description };
+        }
+
+        // Особая обработка image_url
+        let finalImageUrl: string | null = existingNews.image_url;
+        let imageChanged = false;
+        let oldImageUrlForDelete: string | null = null;
+
+        if (image_url !== undefined) {
+            // Если передан новый URL (или null) — считаем, что изображение меняется
+            imageChanged = true;
+            oldImageUrlForDelete = existingNews.image_url; // запоминаем старое для удаления
+
+            if (image_url === null || image_url.trim() === "") {
+                finalImageUrl = null; // пользователь хочет удалить изображение
+                changes.image_url = { old: existingNews.image_url, new: null };
+            } else if (image_url !== existingNews.image_url) {
+                finalImageUrl = image_url;
+                changes.image_url = { old: existingNews.image_url, new: image_url };
+            } else {
+                // image_url передан, но такой же — ничего не меняем
+                imageChanged = false;
+                oldImageUrlForDelete = null;
+            }
+        }
+
+        // Данные для обновления в БД
+        const updateData: any = {
             title: title !== undefined ? title : existingNews.title,
             type_id: type_id !== undefined ? parseInt(type_id) : existingNews.type_id,
             description: description !== undefined ? description : existingNews.description,
-            image_url: image_url !== undefined ? image_url : existingNews.image_url,
         };
 
-        // Определяем, какие поля были изменены для лога
-        const changes: UpdateChanges = {};
-        if (title !== undefined && title !== existingNews.title) {
-            changes.title = {
-                old: existingNews.title || null,
-                new: title
-            };
-        }
-        if (type_id !== undefined && parseInt(type_id) !== existingNews.type_id) {
-            changes.type_id = {
-                old: existingNews.type_id.toString(),
-                new: type_id
-            };
-        }
-        if (description !== undefined && description !== existingNews.description) {
-            changes.description = {
-                old: existingNews.description || null,
-                new: description
-            };
-        }
-        if (image_url !== undefined && image_url !== existingNews.image_url) {
-            changes.image_url = {
-                old: existingNews.image_url || null,
-                new: image_url
-            };
+        if (image_url !== undefined) {
+            updateData.image_url = finalImageUrl;
         }
 
+        // Обновляем запись
         const updatedNews = await prisma.news.update({
             where: { id: parseInt(id) },
             data: updateData,
@@ -113,62 +167,72 @@ export async function POST(request: Request): Promise<NextResponse<NewsUpdateRes
                 description: true,
                 image_url: true,
             },
-        })
+        });
 
+        // === УДАЛЕНИЕ СТАРОГО ИЗОБРАЖЕНИЯ (если было изменение) ===
+        if (imageChanged && oldImageUrlForDelete) {
+            const deleted = await deleteFile(oldImageUrlForDelete);
+            if (deleted) {
+                console.log(`🗑️ Старое изображение удалено: ${oldImageUrlForDelete}`);
+            } else {
+                console.warn(`⚠️ Не удалось удалить старое изображение: ${oldImageUrlForDelete}`);
+            }
+        }
+
+        // Сериализуем ответ
         const serializedNews: NewsUpdateResponse = {
-            id: updatedNews.id.toString(),
+            id: bigIntToString(updatedNews.id),
             title: updatedNews.title,
-            type_id: updatedNews.type_id.toString(),
+            type_id: bigIntToString(updatedNews.type_id),
             type: updatedNews.type,
             created_at: updatedNews.created_at.toISOString(),
             description: updatedNews.description,
             image_url: updatedNews.image_url,
-        }
+        };
 
-        // ← ПРОСТОЙ ЛОГ: передаем только ID, username получит logger.ts
-        await logEvent({
-            action: 'update' as LogAction,
-            entity: 'news' as LogEntity,
-            entityId: BigInt(parseInt(id)),
-            userId: BigInt(0), // 0 = текущий пользователь из сессии
-            details: {
+        // Логируем успешное обновление
+        const { userId, username } = await getUserInfoFromSession();
+        await safeLogEvent(
+            "update" as LogAction,
+            "news" as LogEntity,
+            updatedNews.id,
+            userId,
+            username,
+            {
                 title: updatedNews.title,
-                type_id: updatedNews.type_id.toString(),
+                type_id: bigIntToString(updatedNews.type_id),
                 changes: Object.keys(changes).length > 0 ? changes : null,
+                imageDeleted: imageChanged && oldImageUrlForDelete ? true : false,
                 oldData: {
                     title: existingNews.title,
                     type_id: existingNews.type_id.toString(),
                     description: existingNews.description,
-                    image_url: existingNews.image_url
-                }
-            } as Record<string, unknown>,
-        });
+                    image_url: existingNews.image_url,
+                },
+            }
+        );
 
-        return NextResponse.json(serializedNews)
+        return NextResponse.json(serializedNews);
     } catch (error) {
-        console.error("Ошибка при обновлении новости:", error)
+        console.error("Ошибка при обновлении новости:", error);
 
-        // ← ПРОСТОЙ ЛОГ ОШИБКИ
-        await logEvent({
-            action: 'error' as LogAction,
-            entity: 'news' as LogEntity,
-            entityId: BigInt(requestData?.id ? parseInt(requestData.id) : 0),
-            userId: BigInt(0), // 0 = текущий пользователь из сессии
-            details: {
-                operation: 'UPDATE',
-                error: error instanceof Error ? error.message : 'Unknown error',
+        const { userId, username } = await getUserInfoFromSession();
+        await safeLogEvent(
+            "error" as LogAction,
+            "news" as LogEntity,
+            requestData?.id ? BigInt(parseInt(requestData.id)) : BigInt(0),
+            userId,
+            username,
+            {
+                operation: "UPDATE",
+                error: error instanceof Error ? error.message : "Unknown error",
                 newsId: requestData?.id,
-                data: {
-                    title: requestData?.title,
-                    type_id: requestData?.type_id,
-                    description: requestData?.description,
-                    image_url: requestData?.image_url
-                }
-            } as Record<string, unknown>,
-        });
+                data: requestData,
+            }
+        );
 
-        return NextResponse.json({ error: "Не удалось обновить новость" }, { status: 500 })
+        return NextResponse.json({ error: "Не удалось обновить новость" }, { status: 500 });
     } finally {
-        await prisma.$disconnect()
+        await prisma.$disconnect();
     }
 }

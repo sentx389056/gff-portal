@@ -10,6 +10,12 @@
 !.yarn/releases
 !.yarn/versions
 
+# Загруженные файлы - игнорируем сами файлы, но сохраняем структуру папок
+/public/uploads/**/*
+!/public/uploads/.gitkeep
+!/public/uploads/images/.gitkeep
+!/public/uploads/documents/.gitkeep
+
 # testing
 /coverage
 

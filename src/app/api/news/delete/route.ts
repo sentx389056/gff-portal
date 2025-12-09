@@ -1,154 +1,144 @@
 // app/api/news/delete/route.ts
-import { NextResponse } from "next/server";
-import { PrismaClient } from "../../../../../prisma/generated/prisma";
-import { logEvent, LogAction, LogEntity } from "@/lib/logger";
-
-// Функция для конвертации BigInt в string
-const bigIntToString = (value: bigint): string => {
-    return value.toString();
-};
+import { NextResponse } from "next/server"
+import { PrismaClient } from "../../../../../prisma/generated/prisma"
+import { logEvent, LogAction, LogEntity } from "@/lib/logger"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/lib/auth"
+import { deleteFile } from "@/lib/file-utils"
+import type { Session } from "next-auth"
 
 interface NewsDeleteRequest {
-    id: string;
+    id: string
 }
 
 interface NewsItem {
-    id: string; // ← Изменено на string для JSON
-    title: string;
-    image_url: string | null;
+    id: number
+    title: string
+    image_url: string | null
 }
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
-export async function POST(request: Request) {
-    let requestData: NewsDeleteRequest | null = null;
+// Получение userId и username из NextAuth
+const getUserInfoFromSession = async (): Promise<{ userId: number | null; username: string }> => {
+    try {
+        const session = (await getServerSession(authOptions)) as Session | null
+        if (!session?.user?.id) {
+            return { userId: null, username: "anonymous" }
+        }
+        const userId = parseInt(session.user.id)
+        const username = session.user.username || "unknown"
+        return { userId, username }
+    } catch (error) {
+        console.error("Ошибка при получении user info:", error)
+        return { userId: null, username: "anonymous" }
+    }
+}
+
+// Функция для логирования с проверкой userId
+const createLogEvent = async (
+    action: LogAction,
+    entity: LogEntity,
+    entityId: number,
+    userId: number | null,
+    username: string,
+    details?: Record<string, unknown>
+) => {
+    // Не логируем если нет валидного userId
+    if (!userId) {
+        console.warn("⚠️ Пропускаем логирование: userId отсутствует")
+        return
+    }
 
     try {
-        requestData = await request.json() as NewsDeleteRequest;
-        const { id } = requestData;
+        await logEvent({
+            action,
+            entity,
+            entityId: BigInt(entityId),
+            userId: BigInt(userId),
+            username,
+            details: details || null,
+        })
+    } catch (logError) {
+        console.error("❌ Ошибка при создании лог-события:", logError)
+    }
+}
+
+export async function POST(request: Request) {
+    let requestData: NewsDeleteRequest | null = null
+
+    try {
+        requestData = await request.json() as NewsDeleteRequest
+        const { id } = requestData
 
         if (!id) {
-            // Логируем ошибку отсутствия ID
-            await logEvent({
-                action: 'error' as LogAction,
-                entity: 'news' as LogEntity,
-                entityId: BigInt(0),
-                userId: BigInt(0),
-                details: {
-                    operation: 'DELETE',
-                    error: 'ID новости обязателен',
-                    newsId: null
-                }
-            });
+            const { userId, username } = await getUserInfoFromSession()
+            await createLogEvent('error', 'news', 0, userId, username, {
+                operation: 'DELETE',
+                error: 'ID новости обязателен',
+                newsId: null
+            })
 
-            return NextResponse.json({ error: "ID новости обязателен" }, { status: 400 });
+            return NextResponse.json({ error: "ID новости обязателен" }, { status: 400 })
         }
 
         // Получаем новость для логирования и удаления файла
-        const newsItemRaw = await prisma.news.findUnique({
+        const newsItem = await prisma.news.findUnique({
             where: { id: parseInt(id) },
             select: {
                 id: true,
                 title: true,
                 image_url: true
             },
-        });
+        }) as NewsItem | null
 
-        if (!newsItemRaw) {
-            // Логируем ошибку новости не найдена
-            await logEvent({
-                action: 'error' as LogAction,
-                entity: 'news' as LogEntity,
-                entityId: BigInt(parseInt(id)),
-                userId: BigInt(0),
-                details: {
-                    operation: 'DELETE',
-                    error: 'Новость не найдена',
-                    newsId: id,
-                    attemptedBy: 'current_user'
-                }
-            });
+        if (!newsItem) {
+            const { userId, username } = await getUserInfoFromSession()
+            await createLogEvent('error', 'news', parseInt(id), userId, username, {
+                operation: 'DELETE',
+                error: 'Новость не найдена',
+                newsId: id,
+                attemptedBy: username
+            })
 
-            return NextResponse.json({ error: "Новость не найдена" }, { status: 404 });
+            return NextResponse.json({ error: "Новость не найдена" }, { status: 404 })
         }
-
-        // Конвертируем BigInt для JSON ответа
-        const newsItem: NewsItem = {
-            id: bigIntToString(newsItemRaw.id),
-            title: newsItemRaw.title,
-            image_url: newsItemRaw.image_url,
-        };
 
         // Удаляем новость из БД
         await prisma.news.delete({
             where: { id: parseInt(id) },
-        });
+        })
 
-        // Удаляем файл изображения, если он есть
+        // Удаляем файл изображения напрямую (без fetch)
         if (newsItem.image_url) {
-            try {
-                const deleteResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/delete-file`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ filePath: newsItem.image_url }),
-                });
-
-                if (!deleteResponse.ok) {
-                    console.warn(`⚠️ Не удалось удалить файл: ${newsItem.image_url}`);
-                } else {
-                    console.log(`🗑️ File deleted: ${newsItem.image_url}`);
-                }
-            } catch (fileError) {
-                console.error("Ошибка при удалении файла:", fileError);
-                // Логируем ошибку удаления файла
-                await logEvent({
-                    action: 'error' as LogAction,
-                    entity: 'news' as LogEntity,
-                    entityId: BigInt(newsItemRaw.id),
-                    userId: BigInt(0),
-                    details: {
-                        operation: 'DELETE_FILE',
-                        error: fileError instanceof Error ? fileError.message : 'Unknown file deletion error',
-                        filePath: newsItem.image_url,
-                        newsTitle: newsItem.title
-                    }
-                });
+            const deleted = await deleteFile(newsItem.image_url)
+            if (deleted) {
+                console.log(`✅ Изображение удалено: ${newsItem.image_url}`)
             }
         }
 
         // Логируем успешное удаление
-        await logEvent({
-            action: 'delete' as LogAction,
-            entity: 'news' as LogEntity,
-            entityId: BigInt(newsItemRaw.id),
-            userId: BigInt(0),
-            details: {
-                title: newsItem.title,
-                deletedBy: 'current_user',
-                imageDeleted: !!newsItem.image_url,
-                newsId: id
-            }
-        });
+        const { userId, username } = await getUserInfoFromSession()
+        await createLogEvent('delete', 'news', newsItem.id, userId, username, {
+            title: newsItem.title,
+            deletedBy: username,
+            imageDeleted: !!newsItem.image_url,
+            newsId: id
+        })
 
-        console.log(`✅ News deleted successfully: ${newsItem.title} (ID: ${id})`);
+        console.log(`✅ Новость удалена: ${newsItem.title} (ID: ${id})`)
 
         return NextResponse.json({ success: true })
     } catch (error) {
-        console.error("Ошибка при удалении новости:", error)
+        console.error("❌ Ошибка при удалении новости:", error)
 
-        // Логируем техническую ошибку
-        await logEvent({
-            action: 'error' as LogAction,
-            entity: 'news' as LogEntity,
-            entityId: BigInt(requestData?.id ? parseInt(requestData.id) : 0),
-            userId: BigInt(0),
-            details: {
-                operation: 'DELETE',
-                error: error instanceof Error ? error.message : 'Unknown error',
-                newsId: requestData?.id,
-                attemptedBy: 'current_user'
-            }
-        });
+        const { userId, username } = await getUserInfoFromSession()
+        await createLogEvent('error', 'news', requestData?.id ? parseInt(requestData.id) : 0, userId, username, {
+            operation: 'DELETE',
+            error: error instanceof Error ? error.message : 'Unknown error',
+            newsId: requestData?.id,
+            attemptedBy: username
+        })
 
         return NextResponse.json({ error: "Не удалось удалить новость" }, { status: 500 })
     } finally {

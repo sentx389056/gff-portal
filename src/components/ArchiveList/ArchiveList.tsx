@@ -49,6 +49,12 @@ export default function ArchiveList({filter, date, query}: {
         }
 
         fetchNews();
+        
+        // Устанавливаем интервал для обновления каждые 30 секунд
+        const interval = setInterval(fetchNews, 30000);
+        
+        // Очищаем интервал при размонтировании компонента
+        return () => clearInterval(interval);
     }, []);
 
     let filteredNews = news;

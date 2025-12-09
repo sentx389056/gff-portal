@@ -1,4 +1,7 @@
-// app/api/files/[subfolder]/[filename]/route.ts
+// src/app/api/files/[subfolder]/[filename]/route.ts
+// ПРИМЕЧАНИЕ: Этот route НЕ нужен, т.к. файлы из public/ раздаются автоматически
+// Оставлен только для обратной совместимости со старыми ссылками
+
 import { NextResponse } from "next/server"
 import { readFile, access, constants } from "fs/promises"
 import path from "path"
@@ -6,10 +9,11 @@ import { existsSync } from "fs"
 
 export async function GET(
     request: Request,
-    { params }: { params: { subfolder: string; filename: string } }
+    { params }: { params: Promise<{ subfolder: string; filename: string }> }
 ) {
     try {
-        const { subfolder, filename } = params
+        // Await params (Next.js 15 requirement)
+        const { subfolder, filename } = await params
 
         // Валидация пути
         if (!['images', 'documents'].includes(subfolder)) {
@@ -20,21 +24,18 @@ export async function GET(
             return NextResponse.json({ error: "Недопустимое имя файла" }, { status: 400 })
         }
 
-        // Путь к файлу
+        // ИСПРАВЛЕНО: Читаем из public/uploads
         const filepath = path.join(
             process.cwd(),
-            ".next",
-            "server",
-            "app",
-            "api",
-            "files",
+            "public",
+            "uploads",
             subfolder,
             filename
         )
 
         // Проверяем существование
         if (!existsSync(filepath)) {
-            console.warn(`Файл не найден: ${filepath}`)
+            console.warn(`❌ Файл не найден: ${filepath}`)
             return NextResponse.json({ error: "Файл не найден" }, { status: 404 })
         }
 
@@ -49,6 +50,8 @@ export async function GET(
         const buffer = await readFile(filepath)
         const contentType = getContentType(filename)
 
+        console.log(`✅ Файл отправлен: ${filepath}`)
+
         return new NextResponse(buffer, {
             status: 200,
             headers: {
@@ -59,8 +62,11 @@ export async function GET(
             },
         })
     } catch (error) {
-        console.error("Ошибка доступа к файлу:", error)
-        return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 })
+        console.error("💥 Ошибка доступа к файлу:", error)
+        return NextResponse.json({ 
+            error: "Ошибка сервера",
+            details: error instanceof Error ? error.message : 'Unknown error'
+        }, { status: 500 })
     }
 }
 
@@ -76,6 +82,8 @@ function getContentType(filename: string): string {
         '.pdf': 'application/pdf',
         '.doc': 'application/msword',
         '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        '.xls': 'application/vnd.ms-excel',
+        '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     }
     return mimeTypes[ext] || 'application/octet-stream'
 }

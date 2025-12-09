@@ -1,13 +1,11 @@
 'use client';
-import "./style.css";
-import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
-import Link from "next/link";
 import {Badge} from "@/components/ui/badge";
 import {formatDate, getFileExtension} from "@/lib/utils";
+import Link from "next/link";
 
 // Тип для элемента документа
 interface DocumentItem {
@@ -23,7 +21,7 @@ interface DocumentItem {
 }
 
 export default function DocumentsList({ filter, query }: { filter: string, query: string }) {
-    const [documents, setDocuments] = useState<DocumentItem[]>([]); // ← Исправлено: any[] → DocumentItem[]
+    const [documents, setDocuments] = useState<DocumentItem[]>([]); 
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -31,17 +29,24 @@ export default function DocumentsList({ filter, query }: { filter: string, query
             try {
                 const response = await fetch('/api/documents');
                 if (!response.ok) {
-                    throw new Error('Ошибка при получении документов'); // ← Исправлен текст ошибки
+                    throw new Error('Ошибка при получении документов'); 
                 }
                 const data = await response.json();
                 setDocuments(data);
             } catch (error) {
-                console.error('Ошибка при загрузке документов:', error); // ← Исправлен текст ошибки
+                console.error('Ошибка при загрузке документов:', error); 
             } finally {
                 setLoading(false);
             }
         }
+        
         fetchDocuments();
+        
+        // Устанавливаем интервал для обновления каждые 30 секунд
+        const interval = setInterval(fetchDocuments, 30000);
+        
+        // Очищаем интервал при размонтировании компонента
+        return () => clearInterval(interval);
     }, []);
 
     let filteredDocs = documents;
@@ -80,25 +85,24 @@ export default function DocumentsList({ filter, query }: { filter: string, query
                 ) : (
                     filteredDocs.map((doc: DocumentItem) => ( // ← Явно типизируем параметр
                         <div className="rounded-md flex flex-col gap-6 sm:flex-row justify-between bg-white border-1 shadow-md px-6 py-8 duration-200 hover:shadow-xl" key={doc.id}>
-                            <div className="documents-info">
-                                <div className="documents-title-row">
-                                    <span className="documents-title">{doc.title || "Без названия"}</span>
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-6">
+                                    <span className="text-xl">{doc.title || "Без названия"}</span>
                                     <Badge>
                                         {doc.type.type}
                                     </Badge>
                                 </div>
-                                <div className="documents-desc">{doc.description || "Описание отсутствует"}</div>
-                                <div className="documents-meta">
-									<span className="text-sm">
+                                <div className="text-lg text-slate-700">{doc.description || "Описание отсутствует"}</div>
+                                <div className="flex gap-6 items-center">
+									<span className="text-md text-slate-500">
 										  {formatDate(doc.created_at)}
 									</span>
-                                    <Separator orientation="vertical" />
-                                    <span>{getFileExtension(doc.file_url)}</span>
+                                    <span className="text-md text-slate-500">{getFileExtension(doc.file_url || "#")}</span>
                                 </div>
                             </div>
-                            <Button variant="outline" size="lg" className="flex items-center gap-2 documents-download" asChild>
-                                <Link href={doc.file_url || "#"}>
-                                    <Download size={20} />
+                            <Separator className="" orientation="vertical" />
+                            <Button variant="outline" size="lg" className="flex items-center gap-2" asChild>
+                                <Link href={doc.file_url || "#"} target="_blank" download>
                                     Скачать
                                 </Link>
                             </Button>

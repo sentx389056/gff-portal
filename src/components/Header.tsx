@@ -1,10 +1,9 @@
 "use client"
 
 import Image from "next/image"
-import { LogOutIcon, Menu, Search } from "lucide-react"
+import {LogOutIcon, Menu} from "lucide-react"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import {Button} from "@/components/ui/button"
 import {
     Sheet,
     SheetContent,
@@ -13,22 +12,65 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 import React from "react"
-import LoginDialog from "@/components/login-dialog"
-import { useSession, signOut } from "next-auth/react"
+import {useSession, signOut} from "next-auth/react"
 import AdminPanel from "@/components/AdminComponents/admin-panel";
 
+const navLinks = [
+    {
+        id: 1,
+        title: "Главная",
+        href: "/",
+        target: "_self",
+    },
+    {
+        id: 2,
+        title: "Документы",
+        href: "/documents",
+        target: "_self",
+    },
+    {
+        id: 3,
+        title: "Архив",
+        href: "/archive",
+        target: "_self",
+    },
+    {
+        id: 4,
+        title: "Наша деятельность",
+        href: "/activities",
+        target: "_self",
+    },
+    {
+        id: 5,
+        title: "Руководство портала",
+        href: "/management",
+        target: "_self",
+    },
+    {
+        id: 6,
+        title: "Телефонный справочник",
+        href: "http://pb.gff-rf.ru",
+        target: "_blank",
+    },
+    {
+        id: 7,
+        title: "GLPI",
+        href: "http://sd.gff-rf.ru",
+        target: "_blank",
+    },
+]
+
 export default function Header() {
-    const [query, setQuery] = React.useState("")
-    const [loginOpen, setLoginOpen] = React.useState(false)
-    const { data: session, status } = useSession()
+    const {data: session, status} = useSession()
     const [isAdmin, setIsAdmin] = React.useState(false)
     const [userName, setUserName] = React.useState("")
 
     React.useEffect(() => {
         if (status === "authenticated" && session?.user) {
-            setIsAdmin(session.user.role === "admin")
+            const userRole = (session.user as any).role || "user";
+            setIsAdmin(userRole === "admin")
             setUserName(session.user.name || "")
-            localStorage.setItem("isAdmin", session.user.role === "admin" ? "true" : "false")
+            localStorage.setItem("isAdmin", userRole === "admin" ? "true" : "false")
             localStorage.setItem("userName", session.user.name || "")
         } else {
             setIsAdmin(false)
@@ -52,7 +94,7 @@ export default function Header() {
             }
 
             // Выполняем выход
-            await signOut({ callbackUrl: "/", redirect: true })
+            await signOut({callbackUrl: "/", redirect: true})
         } catch (error) {
             console.error("Ошибка при выходе:", error)
         } finally {
@@ -65,11 +107,11 @@ export default function Header() {
     }
 
     return (
-        <header className="grid grid-cols-3 px-6 h-23 w-full items-center shadow-md">
+        <header className="flex px-6 h-23 w-full items-center justify-between shadow-md">
             <Sheet>
                 <Link href="/" className="flex items-center gap-4">
                     <Image
-                        className="hidden sm:flex invert"
+                        className="invert"
                         src="/logo.svg"
                         alt="GFF logo"
                         width={71}
@@ -77,21 +119,23 @@ export default function Header() {
                         priority
                     />
                     <div>
-                        <h1 className="text-[19px] leading-[28px]">Госфильмофонд России</h1>
-                        <p className="text-[13px] leading-[20px] text-slate-500">
-                            Государственный фонд кинофильмов Российской Федерации
-                        </p>
+                        <h1 className="text-lg">Локальный портал</h1>
                     </div>
                 </Link>
                 <div className="">
                     <div className="hidden xl:flex items-center justify-center gap-2 md:gap-8">
-                        <Link className="text-slate-500" href="/">Главная</Link>
-                        <Link className="text-slate-500" href="/documents">Документы</Link>
-                        <Link className="text-slate-500" href="/archive">Архив</Link>
+                        {navLinks.map((item) => (
+                            <Link key={item.id}
+                                  className="hover:border-b-1 hover:border-b-slate-800 duration-300 focus:border-b-2 focus:border-b-slate-800"
+                                  href={item.href}
+                                  target={item.target}>
+                                {item.title}
+                            </Link>
+                        ))}
                     </div>
                 </div>
                 <div className="hidden xl:flex items-center justify-end gap-[12px] relative">
-                    {isAdmin && <AdminPanel />}
+                    {isAdmin && <AdminPanel/>}
                     {status === "authenticated" && (
                         <div className="flex items-center gap-2">
                             <span className="text-sm text-slate-500">{userName}</span>
@@ -101,17 +145,9 @@ export default function Header() {
                                 className="cursor-pointer"
                                 onClick={handleLogout}
                             >
-                                <LogOutIcon />
+                                <LogOutIcon/>
                             </Button>
                         </div>
-                    )}
-                    {status !== "authenticated" && (
-                        <LoginDialog
-                            open={loginOpen}
-                            setOpen={setLoginOpen}
-                            setIsAdmin={setIsAdmin}
-                            setUserName={setUserName}
-                        />
                     )}
                 </div>
                 <div className="flex grow items-center justify-end xl:hidden">
@@ -119,26 +155,23 @@ export default function Header() {
                         asChild
                         className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none"
                     >
-                        <Button variant="ghost" className="hover:bg-slate-200/50 cursor-pointer">
-                            <span className="sr-only">Открыть меню</span>
-                            <Menu className="text-slate-500" aria-hidden="true" />
-                        </Button>
+
+                        <Menu className="text-slate-500" size={40} aria-hidden="true"/>
                     </SheetTrigger>
                     <SheetContent>
                         <SheetHeader>
                             <SheetTitle>
-                                <div className="mt-8 flex items-center gap-[12px]">
-                                    <Button className="cursor-pointer">
-                                        <Search className="text-slate-500" aria-hidden="true" />
-                                    </Button>
-                                    <Input placeholder="Поиск..." />
+                                <div className="text-slate-500 mt-8 flex w-full flex-col gap-6">
+                                    {navLinks.map((item) => (
+                                        <Link key={item.id}
+                                              className="hover:border-b-1 hover:border-b-slate-800 duration-300 focus:border-b-2 focus:border-b-slate-800"
+                                              href={item.href}
+                                              target={item.target}>
+                                            {item.title}
+                                        </Link>
+                                    ))}
                                 </div>
                             </SheetTitle>
-                            <nav className="mt-8 flex w-full flex-col gap-6">
-                                <Link className="text-slate-500" href="/">Главная</Link>
-                                <Link className="text-slate-500" href="/documents">Документы</Link>
-                                <Link className="text-slate-500" href="/archive">Архив</Link>
-                            </nav>
                         </SheetHeader>
                     </SheetContent>
                 </div>

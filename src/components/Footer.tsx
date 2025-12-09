@@ -21,7 +21,7 @@ export default function Footer() {
                         />
                         <div>
                             <h1 className="text-lg text-white">
-                                Госфильмофонд России
+                                Локальный портал
                             </h1>
                             <p className="leading-[20px] text-slate-300">
                                 Государственный фонд кинофильмов Российской Федерации
@@ -43,7 +43,7 @@ export default function Footer() {
                                 href="mailto:gff@gff-rf.ru"
                             >
                                 <Mail className="hidden xl:flex" size={22}/>
-                                <p>gff@gff-rf.ru</p>
+                                <p>portal@gff-rf.ru</p>
                             </Link>
                         </li>
                     </ul>
@@ -83,28 +83,25 @@ export default function Footer() {
                     <p className="text-lg text-white pb-4">Информационный раздел</p>
                     <ul className="">
                         <li className="pb-2 hover:text-accent cursor-pointer">
-                            <Link href="https://gosfilmofond.ru/news/">Новости</Link>
+                            <Link href="/#news_events">Новости и События</Link>
                         </li>
                         <li className="pb-2 hover:text-accent cursor-pointer">
                             <Link href="https://gosfilmofond.ru/vestnik-gosfilmofonda-rossii/">Вестник Госфильмофонда России</Link>
-                        </li>
-                        <li className="pb-2 hover:text-accent cursor-pointer">
-                            <Link href="https://gosfilmofond.ru/sobytiya/">События</Link>
                         </li>
                     </ul>
                 </div>
 
                 <div>
-                    <p className="text-lg text-white pb-4">О фонде</p>
+                    <p className="text-lg text-white pb-4">О портале</p>
                     <ul className="">
                         <li className="pb-2 hover:text-accent cursor-pointer">
-                            <Link href="https://gosfilmofond.ru/nasha-deyatelnost/">Наша деятельность</Link>
+                            <Link href="/activities">Наша деятельность</Link>
                         </li>
                         <li className="pb-2 hover:text-accent cursor-pointer">
-                            <Link href="https://gosfilmofond.ru/rukovodstvo-fonda/">Руководство фонда</Link>
+                            <Link href="/management">Руководство портала</Link>
                         </li>
                         <li className="pb-2 hover:text-accent cursor-pointer">
-                            <Link href="https://gosfilmofond.ru/dokumenty/">Документы</Link>
+                            <Link href="/documents">Документы</Link>
                         </li>
                     </ul>
                 </div>

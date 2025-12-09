@@ -51,6 +51,12 @@ export default function NewsSection() {
         }
 
         fetchNews();
+        
+        // Устанавливаем интервал для обновления каждые 30 секунд
+        const interval = setInterval(fetchNews, 30000);
+        
+        // Очищаем интервал при размонтировании компонента
+        return () => clearInterval(interval);
     }, []);
 
     return (

@@ -77,6 +77,20 @@ const nextConfig: NextConfig = {
         'clsx',
         'tailwind-merge',
     ],
+
+    webpack: (config, { isServer }) => {
+        // Basic fallbacks for browser compatibility
+        if (!isServer) {
+            config.resolve.fallback = {
+                ...config.resolve.fallback,
+                fs: false,
+                path: false,
+                crypto: false,
+            };
+        }
+        
+        return config;
+    },
 }
 
 export default nextConfig

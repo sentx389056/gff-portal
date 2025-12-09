@@ -1,4 +1,4 @@
-// app/api/files/upload/route.ts
+// src/app/api/upload/route.ts
 import { NextResponse } from "next/server"
 import { writeFile, mkdir } from "fs/promises"
 import path from "path"
@@ -25,7 +25,7 @@ export async function POST(request: Request): Promise<NextResponse<UploadRespons
             }, { status: 400 })
         }
 
-        // Валидация
+        // Валидация размера
         const maxSize = 5 * 1024 * 1024 // 5MB
         if (file.size > maxSize) {
             return NextResponse.json({
@@ -38,18 +38,18 @@ export async function POST(request: Request): Promise<NextResponse<UploadRespons
         const fileType = file.type.split('/')[0] // image, application
         const subfolder = fileType === 'image' ? 'images' : 'documents'
 
-        // Уникальное имя файла
-        const timestamp = Date.now()
+        // Оригинальное имя файла с очисткой специальных символов
         const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_")
-        const filename = `${timestamp}_${cleanName}`
+        const filename = cleanName
 
-        // Путь: .next/server/app/api/files/[type]/[filename]
-        const uploadDir = path.join(process.cwd(), ".next", "server", "app", "api", "files", subfolder)
+        // ИСПРАВЛЕНО: Сохраняем в public/uploads (постоянная папка)
+        const uploadDir = path.join(process.cwd(), "public", "uploads", subfolder)
         const filepath = path.join(uploadDir, filename)
 
-        // Создаем папку
+        // Создаем папку если не существует
         if (!existsSync(uploadDir)) {
             await mkdir(uploadDir, { recursive: true })
+            console.log(`📁 Создана папка: ${uploadDir}`)
         }
 
         // Сохраняем файл
@@ -57,14 +57,15 @@ export async function POST(request: Request): Promise<NextResponse<UploadRespons
         const buffer = Buffer.from(bytes)
         await writeFile(filepath, buffer)
 
-        // Публичный URL через API route
-        const fileUrl = `/api/files/${subfolder}/${filename}`
+        // Прямой публичный URL (файлы из public доступны автоматически)
+        const fileUrl = `/uploads/${subfolder}/${filename}`
 
-        console.log(`💾 File uploaded: ${fileUrl}`)
+        console.log(`💾 Файл загружен: ${fileUrl}`)
+        console.log(`📂 Сохранён в: ${filepath}`)
 
         return NextResponse.json({
             success: true,
-            url: fileUrl, // /api/files/images/filename.png
+            url: fileUrl, // /uploads/images/123456_file.png
             filename: file.name,
             size: file.size,
             type: fileType,
