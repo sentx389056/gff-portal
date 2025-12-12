@@ -1,89 +1,74 @@
-// src/app/api/files/[...path]/[filename]/route.ts
-// ПРИМЕЧАНИЕ: Этот route НЕ нужен, т.к. файлы из public/ раздаются автоматически
-// Оставлен только для обратной совместимости со старыми ссылками
-
-import { NextResponse } from "next/server"
-import { readFile, access, constants } from "fs/promises"
+// src/app/api/files/[...path]/route.ts
+import { NextRequest, NextResponse } from "next/server"
+import { readFile } from "fs/promises"
 import path from "path"
 import { existsSync } from "fs"
 
 export async function GET(
-    request: Request,
-    { params }: { params: Promise<{ subfolder: string; filename: string }> }
+    request: NextRequest,
+    { params }: { params: { path: string[] } }
 ) {
     try {
-        // Await params (Next.js 15 requirement)
-        const { subfolder, filename } = await params
+        // Собираем путь из массива: ['documents', '1765522567527_README.pdf']
+        const filePath = params.path.join('/')
+        const uploadBaseDir = process.env.UPLOAD_DIR || '/var/www/uploads'
+        const fullPath = path.join(uploadBaseDir, filePath)
 
-        // Валидация пути
-        if (!['images', 'documents'].includes(subfolder)) {
-            return NextResponse.json({ error: "Недопустимая папка" }, { status: 400 })
+        console.log(`📥 Запрос файла: ${filePath}`)
+        console.log(`📂 Полный путь: ${fullPath}`)
+
+        // Проверка безопасности
+        const normalizedPath = path.normalize(fullPath)
+        if (!normalizedPath.startsWith(uploadBaseDir)) {
+            console.error(`⛔ Попытка доступа за пределы папки загрузок`)
+            return NextResponse.json(
+                { error: "Недопустимый путь" },
+                { status: 403 }
+            )
         }
 
-        if (!filename || filename.includes('..') || filename.includes('/')) {
-            return NextResponse.json({ error: "Недопустимое имя файла" }, { status: 400 })
+        if (!existsSync(fullPath)) {
+            console.error(`❌ Файл не найден: ${fullPath}`)
+            return NextResponse.json(
+                { error: "Файл не найден" },
+                { status: 404 }
+            )
         }
 
-        // ИСПРАВЛЕНО: Читаем из public/uploads
-        const filepath = path.join(
-            process.cwd(),
-            "public",
-            "uploads",
-            subfolder,
-            filename
-        )
+        const fileBuffer = await readFile(fullPath)
+        const filename = path.basename(fullPath)
 
-        // Проверяем существование
-        if (!existsSync(filepath)) {
-            console.warn(`❌ Файл не найден: ${filepath}`)
-            return NextResponse.json({ error: "Файл не найден" }, { status: 404 })
+        // Определяем MIME type
+        const ext = path.extname(filename).toLowerCase()
+        const mimeTypes: Record<string, string> = {
+            '.pdf': 'application/pdf',
+            '.doc': 'application/msword',
+            '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            '.xls': 'application/vnd.ms-excel',
+            '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg',
+            '.png': 'image/png',
+            '.gif': 'image/gif',
+            '.webp': 'image/webp',
         }
 
-        // Проверяем права доступа
-        try {
-            await access(filepath, constants.R_OK)
-        } catch {
-            return NextResponse.json({ error: "Нет доступа к файлу" }, { status: 403 })
-        }
+        const contentType = mimeTypes[ext] || 'application/octet-stream'
 
-        // Читаем файл
-        const buffer = await readFile(filepath)
-        const contentType = getContentType(filename)
+        console.log(`✅ Файл отдан: ${filename} (${contentType})`)
 
-        console.log(`✅ Файл отправлен: ${filepath}`)
-
-        return new NextResponse(buffer, {
-            status: 200,
+        return new NextResponse(fileBuffer, {
             headers: {
                 'Content-Type': contentType,
-                'Content-Length': buffer.length.toString(),
-                'Cache-Control': 'public, max-age=31536000, immutable',
-                'Access-Control-Allow-Origin': '*',
+                'Content-Disposition': `inline; filename="${encodeURIComponent(filename)}"`,
+                'Cache-Control': 'public, max-age=31536000',
             },
         })
     } catch (error) {
-        console.error("💥 Ошибка доступа к файлу:", error)
-        return NextResponse.json({ 
-            error: "Ошибка сервера",
-            details: error instanceof Error ? error.message : 'Unknown error'
-        }, { status: 500 })
+        console.error("💥 Ошибка при получении файла:", error)
+        return NextResponse.json(
+            { error: "Ошибка при получении файла" },
+            { status: 500 }
+        )
     }
-}
-
-// Вспомогательная функция для MIME типа
-function getContentType(filename: string): string {
-    const ext = path.extname(filename).toLowerCase()
-    const mimeTypes: Record<string, string> = {
-        '.png': 'image/png',
-        '.jpg': 'image/jpeg',
-        '.jpeg': 'image/jpeg',
-        '.gif': 'image/gif',
-        '.webp': 'image/webp',
-        '.pdf': 'application/pdf',
-        '.doc': 'application/msword',
-        '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        '.xls': 'application/vnd.ms-excel',
-        '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    }
-    return mimeTypes[ext] || 'application/octet-stream'
 }

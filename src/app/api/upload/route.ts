@@ -37,11 +37,11 @@ export async function POST(request: Request): Promise<NextResponse<UploadRespons
         const subfolder = fileType === 'image' ? 'images' : 'documents'
         const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_")
 
-        // Добавляем timestamp чтобы избежать перезаписи
+        // Добавляем timestamp
         const timestamp = Date.now()
         const filename = `${timestamp}_${cleanName}`
 
-        // ИСПРАВЛЕНИЕ: Используем переменную окружения или папку вне проекта
+        // Используем /var/www/uploads
         const uploadBaseDir = process.env.UPLOAD_DIR || '/var/www/uploads'
         const uploadDir = path.join(uploadBaseDir, subfolder)
         const filepath = path.join(uploadDir, filename)
@@ -55,7 +55,7 @@ export async function POST(request: Request): Promise<NextResponse<UploadRespons
         const buffer = Buffer.from(bytes)
         await writeFile(filepath, buffer)
 
-        // URL для скачивания через API
+        // ИСПРАВЛЕНО: URL через API endpoint, а не прямой путь к public
         const fileUrl = `/api/files/${subfolder}/${filename}`
 
         console.log(`💾 Файл загружен: ${fileUrl}`)
@@ -63,7 +63,7 @@ export async function POST(request: Request): Promise<NextResponse<UploadRespons
 
         return NextResponse.json({
             success: true,
-            url: fileUrl,
+            url: fileUrl, // Теперь /api/files/documents/1765522567527_README.pdf
             filename: file.name,
             size: file.size,
             type: fileType,
