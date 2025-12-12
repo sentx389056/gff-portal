@@ -25,7 +25,6 @@ export async function POST(request: Request): Promise<NextResponse<UploadRespons
             }, { status: 400 })
         }
 
-        // Валидация размера
         const maxSize = 5 * 1024 * 1024 // 5MB
         if (file.size > maxSize) {
             return NextResponse.json({
@@ -34,38 +33,37 @@ export async function POST(request: Request): Promise<NextResponse<UploadRespons
             }, { status: 400 })
         }
 
-        // Тип файла и подпапка
-        const fileType = file.type.split('/')[0] // image, application
+        const fileType = file.type.split('/')[0]
         const subfolder = fileType === 'image' ? 'images' : 'documents'
-
-        // Оригинальное имя файла с очисткой специальных символов
         const cleanName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_")
-        const filename = cleanName
 
-        // ИСПРАВЛЕНО: Сохраняем в public/uploads (постоянная папка)
-        const uploadDir = path.join(process.cwd(), "public", "uploads", subfolder)
+        // Добавляем timestamp чтобы избежать перезаписи
+        const timestamp = Date.now()
+        const filename = `${timestamp}_${cleanName}`
+
+        // ИСПРАВЛЕНИЕ: Используем переменную окружения или папку вне проекта
+        const uploadBaseDir = process.env.UPLOAD_DIR || '/var/www/uploads'
+        const uploadDir = path.join(uploadBaseDir, subfolder)
         const filepath = path.join(uploadDir, filename)
 
-        // Создаем папку если не существует
         if (!existsSync(uploadDir)) {
             await mkdir(uploadDir, { recursive: true })
             console.log(`📁 Создана папка: ${uploadDir}`)
         }
 
-        // Сохраняем файл
         const bytes = await file.arrayBuffer()
         const buffer = Buffer.from(bytes)
         await writeFile(filepath, buffer)
 
-        // Прямой публичный URL (файлы из public доступны автоматически)
-        const fileUrl = `/uploads/${subfolder}/${filename}`
+        // URL для скачивания через API
+        const fileUrl = `/api/files/${subfolder}/${filename}`
 
         console.log(`💾 Файл загружен: ${fileUrl}`)
         console.log(`📂 Сохранён в: ${filepath}`)
 
         return NextResponse.json({
             success: true,
-            url: fileUrl, // /uploads/images/123456_file.png
+            url: fileUrl,
             filename: file.name,
             size: file.size,
             type: fileType,
@@ -74,8 +72,7 @@ export async function POST(request: Request): Promise<NextResponse<UploadRespons
         console.error("💥 Ошибка загрузки файла:", error)
         return NextResponse.json({
             success: false,
-            error: "Ошибка загрузки файла",
-            details: error instanceof Error ? error.message : 'Unknown error'
+            error: "Ошибка загрузки файла"
         }, { status: 500 })
     }
 }

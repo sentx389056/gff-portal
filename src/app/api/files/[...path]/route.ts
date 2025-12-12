@@ -1,4 +1,4 @@
-// src/app/api/files/[subfolder]/[filename]/route.ts
+// src/app/api/files/[...path]/[filename]/route.ts
 // ПРИМЕЧАНИЕ: Этот route НЕ нужен, т.к. файлы из public/ раздаются автоматически
 // Оставлен только для обратной совместимости со старыми ссылками
 
