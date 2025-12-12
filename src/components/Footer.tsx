@@ -40,7 +40,7 @@ export default function Footer() {
                         <li>
                             <Link
                                 className="flex md:flex-row gap-2 items-center"
-                                href="mailto:gff@gff-rf.ru"
+                                href="mailto:portal@gff-rf.ru"
                             >
                                 <Mail className="hidden xl:flex" size={22}/>
                                 <p>portal@gff-rf.ru</p>
