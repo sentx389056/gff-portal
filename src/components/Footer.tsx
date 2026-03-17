@@ -21,7 +21,7 @@ export default function Footer() {
                         />
                         <div>
                             <h1 className="text-lg text-white">
-                                Локальный портал
+                                Портал Госфильмофонда
                             </h1>
                             <p className="leading-[20px] text-slate-300">
                                 Государственный фонд кинофильмов Российской Федерации
@@ -98,7 +98,7 @@ export default function Footer() {
                             <Link href="/activities">Наша деятельность</Link>
                         </li>
                         <li className="pb-2 hover:text-accent cursor-pointer">
-                            <Link href="/management">Руководство портала</Link>
+                            <Link href="/management">Структура</Link>
                         </li>
                         <li className="pb-2 hover:text-accent cursor-pointer">
                             <Link href="/documents">Документы</Link>

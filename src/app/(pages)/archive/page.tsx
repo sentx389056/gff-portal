@@ -5,13 +5,11 @@ import { Button } from "@/components/ui/button";
 
 import React, {useState} from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { DatePicker } from "@/components/date-picker";
 import { Input } from "@/components/ui/input";
 
 export default function ArchivePage() {
 	const [filter, setFilter] = React.useState('');
-	const [query, setQuery] = React.useState('');
-    const [date, setDate] = useState<Date | undefined>(undefined);
+	const [query, setQuery] = useState('');
 
 	return (
 		<main className="p-5">
@@ -19,7 +17,7 @@ export default function ArchivePage() {
 				<section className="py-20 max-w-7xl mx-auto">
 					<div className="text-center">
 						<h1 className="text-4xl text-black-100 font-semibold mb-4">Архив</h1>
-						<p className="text-1xl font-normal text-gray-500">Все новости</p>
+						<p className="text-1xl font-normal text-gray-500">Все новости и события по годам</p>
 					</div>
 					<div className="flex items-center gap-4 flex-wrap sm:flex-nowrap my-8">
 						<div className="w-full">
@@ -51,13 +49,9 @@ export default function ArchivePage() {
 									</DropdownMenuRadioGroup>
 								</DropdownMenuContent>
 							</DropdownMenu>
-							<DatePicker
-								date={date}
-								setDate={setDate}
-							/>
 						</div>
 					</div>
-					<ArchiveList filter={filter} date={date} query={query} />
+					<ArchiveList filter={filter} query={query} />
 				</section>
 			</div>
 		</main>

@@ -11,8 +11,8 @@ const font = Inter({
 })
 
 export const metadata: Metadata = {
-    title: "Портал Госфильмофонд России",
-    description: "Портал Госфильмофонд России",
+    title: "Портал Госфильмофонда России",
+    description: "Портал Госфильмофонда России",
 }
 
 export default function RootLayout({

@@ -42,7 +42,7 @@ const navLinks = [
     },
     {
         id: 5,
-        title: "Руководство портала",
+        title: "Структура",
         href: "/management",
         target: "_self",
     },
@@ -54,9 +54,15 @@ const navLinks = [
     },
     {
         id: 7,
-        title: "GLPI",
+        title: "Служба поддержки",
         href: "http://sd.gff-rf.ru",
         target: "_blank",
+    },
+    {
+        id: 8,
+        title: "Услуги",
+        href: "/services",
+        target: "_self",
     },
 ]
 
@@ -119,7 +125,7 @@ export default function Header() {
                         priority
                     />
                     <div>
-                        <h1 className="text-lg">Локальный портал</h1>
+                        <h1 className="text-lg">Портал Госфильмофонда</h1>
                     </div>
                 </Link>
                 <div className="">
