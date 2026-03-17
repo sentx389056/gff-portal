@@ -199,7 +199,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\Senti\\OneDrive\\Desktop\\gff-portal\\prisma\\generated\\prisma",
+      "value": "/Users/maksimyurt/Desktop/projects/work/portal-gff/gff-portal/prisma/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -209,12 +209,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "darwin-arm64",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\Senti\\OneDrive\\Desktop\\gff-portal\\prisma\\schema.prisma",
+    "sourceFilePath": "/Users/maksimyurt/Desktop/projects/work/portal-gff/gff-portal/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -228,6 +228,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
