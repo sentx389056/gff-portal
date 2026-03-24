@@ -106,14 +106,14 @@ export default function Header() {
             <nav className="hidden 2xl:flex flex-1 items-center justify-center gap-6">
                 {navLinks.map((item) => (
                     <Link key={item.id}
-                        className="hover:border-b hover:border-b-slate-800 duration-300 focus:border-b-2 focus:border-b-slate-800"
+                        className="hover:border-b hover:border-b-slate-800 focus:border-b-2 focus:border-b-slate-800"
                         href={item.href}
                         target={item.target}>
                         {item.title}
                     </Link>
                 ))}
                 <DropdownMenu>
-                    <DropdownMenuTrigger className="flex items-center gap-1 hover:border-b hover:border-b-slate-800 duration-300 outline-none">
+                    <DropdownMenuTrigger className="flex items-center gap-1 hover:border-b hover:border-b-slate-800 outline-none">
                         Ресурсы <ChevronDown size={14} />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>

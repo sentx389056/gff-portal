@@ -65,17 +65,21 @@ const getPrismaClient = (): PrismaClient => {
 
 // LDAP: проверка логина/пароля через AD и получение displayName
 async function ldapAuthenticate(username: string, password: string): Promise<{ displayName: string } | null> {
-    const client = new Client({
-        url: process.env.LDAP_SERVER!,
-        timeout: 5000,
-        connectTimeout: 5000,
-    });
+    const ldapUrl = process.env.LDAP_SERVER;
+    if (!ldapUrl) {
+        console.error("[LDAP] LDAP_SERVER не задан в .env");
+        return null;
+    }
+
+    const client = new Client({ url: ldapUrl, timeout: 5000, connectTimeout: 5000 });
+    let bound = false;
 
     try {
-        // Bind от имени пользователя в формате UPN
-        await client.bind(`${username}@gff-rf.ru`, password);
+        const upn = `${username}@gff-rf.ru`;
+        console.log(`[LDAP] Bind: ${upn} → ${ldapUrl}`);
+        await client.bind(upn, password);
+        bound = true;
 
-        // Ищем запись пользователя для получения displayName
         const { searchEntries } = await client.search("DC=gff-rf,DC=ru", {
             filter: `(sAMAccountName=${username})`,
             scope: "sub",
@@ -83,11 +87,13 @@ async function ldapAuthenticate(username: string, password: string): Promise<{ d
         });
 
         const displayName = searchEntries[0]?.displayName as string | undefined;
+        console.log(`[LDAP] OK — displayName: ${displayName}`);
         return { displayName: displayName || username };
-    } catch {
+    } catch (err) {
+        console.error("[LDAP] Ошибка:", err);
         return null;
     } finally {
-        await client.unbind();
+        if (bound) await client.unbind();
     }
 }
 

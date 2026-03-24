@@ -18,6 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 const SERVICE_OPTIONS = [
   { value: 'hairdressing', label: 'Парикмахерские услуги' },
@@ -46,6 +48,7 @@ interface FormErrors {
 }
 
 export default function ServiceBookingDialog({ defaultService, triggerLabel = 'Записаться' }: Props) {
+  const { data: session, status } = useSession();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<FormState>({
     name: '',
@@ -55,6 +58,17 @@ export default function ServiceBookingDialog({ defaultService, triggerLabel = '�
     preferred_date: '',
     comment: '',
   });
+
+  React.useEffect(() => {
+    const user = session?.user as { name?: string | null; username?: string } | undefined;
+    if (user) {
+      setForm((f) => ({
+        ...f,
+        name: user.name ?? '',
+        email: user.username ? `${user.username}@gff-rf.ru` : '',
+      }));
+    }
+  }, [session]);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -119,9 +133,15 @@ export default function ServiceBookingDialog({ defaultService, triggerLabel = '�
           <DialogTitle>Запись на услугу</DialogTitle>
         </DialogHeader>
 
-        {success ? (
+        {status !== 'authenticated' ? (
+          <div className="py-8 text-center space-y-3">
+            <p className="text-gray-600">Для записи необходимо войти в аккаунт</p>
+            <Button asChild>
+              <Link href="/auth">Войти</Link>
+            </Button>
+          </div>
+        ) : success ? (
           <div className="py-8 text-center space-y-2">
-            <p className="text-2xl">✅</p>
             <p className="font-semibold text-gray-800">Заявка отправлена!</p>
             <p className="text-gray-500 text-sm">
               С вами свяжется Довгань Анастасия Павловна для подтверждения записи.
