@@ -16,22 +16,22 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
+    children,
+}: Readonly<{
     children: React.ReactNode
 }>) {
     return (
         <html lang="ru">
-        <body
-            className={`${font.className} no-scrollbar`}
-            suppressHydrationWarning={true}
-        >
-        <ClientSessionProvider>
-            <Header />
-            {children}
-            <Footer />
-        </ClientSessionProvider>
-        </body>
+            <body
+                className={`${font.className} no-scrollbar`}
+                suppressHydrationWarning={true}
+            >
+                <ClientSessionProvider>
+                    <Header />
+                    {children}
+                    <Footer />
+                </ClientSessionProvider>
+            </body>
         </html>
     )
 }

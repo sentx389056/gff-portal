@@ -1,6 +1,6 @@
 // lib/auth.ts
 import CredentialsProvider from "next-auth/providers/credentials"
-import bcrypt from "bcrypt"
+import { Client } from "ldapts"
 import { PrismaClient } from "../../prisma/generated/prisma"
 
 // Собственный тип, совместимый с NextAuth (расширенный)
@@ -63,12 +63,40 @@ const getPrismaClient = (): PrismaClient => {
     return prismaInstance;
 };
 
+// LDAP: проверка логина/пароля через AD и получение displayName
+async function ldapAuthenticate(username: string, password: string): Promise<{ displayName: string } | null> {
+    const client = new Client({
+        url: process.env.LDAP_SERVER!,
+        timeout: 5000,
+        connectTimeout: 5000,
+    });
+
+    try {
+        // Bind от имени пользователя в формате UPN
+        await client.bind(`${username}@gff-rf.ru`, password);
+
+        // Ищем запись пользователя для получения displayName
+        const { searchEntries } = await client.search("DC=gff-rf,DC=ru", {
+            filter: `(sAMAccountName=${username})`,
+            scope: "sub",
+            attributes: ["displayName"],
+        });
+
+        const displayName = searchEntries[0]?.displayName as string | undefined;
+        return { displayName: displayName || username };
+    } catch {
+        return null;
+    } finally {
+        await client.unbind();
+    }
+}
+
 export const authOptions: AuthOptions = {
     providers: [
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                username: { label: "Username", type: "text", placeholder: "admin" },
+                username: { label: "Username", type: "text", placeholder: "jurtsev.m" },
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials: { username: string; password: string } | null): Promise<AuthUser | null> {
@@ -79,47 +107,49 @@ export const authOptions: AuthOptions = {
                 const prismaClient = getPrismaClient();
 
                 try {
-                    const user = await prismaClient.users.findUnique({
+                    // Проверяем через AD
+                    const adUser = await ldapAuthenticate(credentials.username, credentials.password);
+
+                    if (!adUser) {
+                        throw new Error("Неверный логин или пароль")
+                    }
+
+                    // Ищем пользователя в локальной БД (для роли)
+                    let dbUser = await prismaClient.users.findUnique({
                         where: { username: credentials.username },
-                        select: {
-                            id: true,
-                            username: true,
-                            name: true,
-                            password: true,
-                            role: { select: { role: true } },
-                        },
-                    })
+                        select: { id: true, username: true, name: true, role: { select: { role: true } } },
+                    });
 
-                    if (!user) {
-                        throw new Error("Неверный логин или пароль")
+                    // Если пользователь первый раз — создаём запись с ролью user
+                    if (!dbUser) {
+                        dbUser = await prismaClient.users.create({
+                            data: {
+                                username: credentials.username,
+                                password: "",          // пароль не используется
+                                name: adUser.displayName,
+                                role_id: 2n,           // user
+                                status_id: 1n,
+                            },
+                            select: { id: true, username: true, name: true, role: { select: { role: true } } },
+                        });
                     }
 
-                    const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
-
-                    if (!isPasswordValid) {
-                        throw new Error("Неверный логин или пароль")
-                    }
-
-                    // Обновляем статус на "active" (id: 1)
                     await prismaClient.users.update({
-                        where: { id: user.id },
-                        data: {
-                            last_activity: new Date(),
-                            status_id: 1,
-                        },
-                    })
+                        where: { id: dbUser.id },
+                        data: { last_activity: new Date(), status_id: 1 },
+                    });
 
                     return {
-                        id: user.id.toString(),
-                        name: user.name,
-                        email: user.username,
-                        username: user.username,
-                        role: user.role.role,
+                        id: dbUser.id.toString(),
+                        name: dbUser.name,
+                        email: dbUser.username,
+                        username: dbUser.username,
+                        role: dbUser.role.role,
                     }
                 } catch (error) {
                     console.error("Ошибка авторизации:", error)
                     throw new Error("Неверный логин или пароль")
-                } // ← Убрали finally - не закрываем соединение
+                }
             },
         }),
     ],

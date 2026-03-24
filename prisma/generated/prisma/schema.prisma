@@ -70,6 +70,19 @@ model StatusesTypes {
   users  Users[]
 }
 
+model ServiceBooking {
+  id             BigInt   @id @default(autoincrement())
+  service_type   String
+  name           String
+  phone          String
+  email          String?
+  preferred_date String
+  comment        String?
+  created_at     DateTime @default(now())
+
+  @@map("service_bookings")
+}
+
 model Users {
   id            BigInt        @id @default(autoincrement())
   username      String        @unique

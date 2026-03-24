@@ -168,6 +168,17 @@ exports.Prisma.StatusesTypesScalarFieldEnum = {
   status: 'status'
 };
 
+exports.Prisma.ServiceBookingScalarFieldEnum = {
+  id: 'id',
+  service_type: 'service_type',
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  preferred_date: 'preferred_date',
+  comment: 'comment',
+  created_at: 'created_at'
+};
+
 exports.Prisma.UsersScalarFieldEnum = {
   id: 'id',
   username: 'username',
@@ -214,6 +225,7 @@ exports.Prisma.ModelName = {
   NewsTypes: 'NewsTypes',
   RolesTypes: 'RolesTypes',
   StatusesTypes: 'StatusesTypes',
+  ServiceBooking: 'ServiceBooking',
   Users: 'Users'
 };
 

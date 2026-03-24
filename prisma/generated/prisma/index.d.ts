@@ -49,6 +49,11 @@ export type RolesTypes = $Result.DefaultSelection<Prisma.$RolesTypesPayload>
  */
 export type StatusesTypes = $Result.DefaultSelection<Prisma.$StatusesTypesPayload>
 /**
+ * Model ServiceBooking
+ * 
+ */
+export type ServiceBooking = $Result.DefaultSelection<Prisma.$ServiceBookingPayload>
+/**
  * Model Users
  * 
  */
@@ -241,6 +246,16 @@ export class PrismaClient<
     * ```
     */
   get statusesTypes(): Prisma.StatusesTypesDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.serviceBooking`: Exposes CRUD operations for the **ServiceBooking** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ServiceBookings
+    * const serviceBookings = await prisma.serviceBooking.findMany()
+    * ```
+    */
+  get serviceBooking(): Prisma.ServiceBookingDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.users`: Exposes CRUD operations for the **Users** model.
@@ -698,6 +713,7 @@ export namespace Prisma {
     NewsTypes: 'NewsTypes',
     RolesTypes: 'RolesTypes',
     StatusesTypes: 'StatusesTypes',
+    ServiceBooking: 'ServiceBooking',
     Users: 'Users'
   };
 
@@ -717,7 +733,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "log" | "documents" | "documentsTypes" | "news" | "newsTypes" | "rolesTypes" | "statusesTypes" | "users"
+      modelProps: "log" | "documents" | "documentsTypes" | "news" | "newsTypes" | "rolesTypes" | "statusesTypes" | "serviceBooking" | "users"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1239,6 +1255,80 @@ export namespace Prisma {
           }
         }
       }
+      ServiceBooking: {
+        payload: Prisma.$ServiceBookingPayload<ExtArgs>
+        fields: Prisma.ServiceBookingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ServiceBookingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceBookingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ServiceBookingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceBookingPayload>
+          }
+          findFirst: {
+            args: Prisma.ServiceBookingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceBookingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ServiceBookingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceBookingPayload>
+          }
+          findMany: {
+            args: Prisma.ServiceBookingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceBookingPayload>[]
+          }
+          create: {
+            args: Prisma.ServiceBookingCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceBookingPayload>
+          }
+          createMany: {
+            args: Prisma.ServiceBookingCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ServiceBookingCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceBookingPayload>[]
+          }
+          delete: {
+            args: Prisma.ServiceBookingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceBookingPayload>
+          }
+          update: {
+            args: Prisma.ServiceBookingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceBookingPayload>
+          }
+          deleteMany: {
+            args: Prisma.ServiceBookingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ServiceBookingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ServiceBookingUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceBookingPayload>[]
+          }
+          upsert: {
+            args: Prisma.ServiceBookingUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceBookingPayload>
+          }
+          aggregate: {
+            args: Prisma.ServiceBookingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateServiceBooking>
+          }
+          groupBy: {
+            args: Prisma.ServiceBookingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ServiceBookingGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ServiceBookingCountArgs<ExtArgs>
+            result: $Utils.Optional<ServiceBookingCountAggregateOutputType> | number
+          }
+        }
+      }
       Users: {
         payload: Prisma.$UsersPayload<ExtArgs>
         fields: Prisma.UsersFieldRefs
@@ -1416,6 +1506,7 @@ export namespace Prisma {
     newsTypes?: NewsTypesOmit
     rolesTypes?: RolesTypesOmit
     statusesTypes?: StatusesTypesOmit
+    serviceBooking?: ServiceBookingOmit
     users?: UsersOmit
   }
 
@@ -9252,6 +9343,1074 @@ export namespace Prisma {
 
 
   /**
+   * Model ServiceBooking
+   */
+
+  export type AggregateServiceBooking = {
+    _count: ServiceBookingCountAggregateOutputType | null
+    _avg: ServiceBookingAvgAggregateOutputType | null
+    _sum: ServiceBookingSumAggregateOutputType | null
+    _min: ServiceBookingMinAggregateOutputType | null
+    _max: ServiceBookingMaxAggregateOutputType | null
+  }
+
+  export type ServiceBookingAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type ServiceBookingSumAggregateOutputType = {
+    id: bigint | null
+  }
+
+  export type ServiceBookingMinAggregateOutputType = {
+    id: bigint | null
+    service_type: string | null
+    name: string | null
+    phone: string | null
+    email: string | null
+    preferred_date: string | null
+    comment: string | null
+    created_at: Date | null
+  }
+
+  export type ServiceBookingMaxAggregateOutputType = {
+    id: bigint | null
+    service_type: string | null
+    name: string | null
+    phone: string | null
+    email: string | null
+    preferred_date: string | null
+    comment: string | null
+    created_at: Date | null
+  }
+
+  export type ServiceBookingCountAggregateOutputType = {
+    id: number
+    service_type: number
+    name: number
+    phone: number
+    email: number
+    preferred_date: number
+    comment: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type ServiceBookingAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type ServiceBookingSumAggregateInputType = {
+    id?: true
+  }
+
+  export type ServiceBookingMinAggregateInputType = {
+    id?: true
+    service_type?: true
+    name?: true
+    phone?: true
+    email?: true
+    preferred_date?: true
+    comment?: true
+    created_at?: true
+  }
+
+  export type ServiceBookingMaxAggregateInputType = {
+    id?: true
+    service_type?: true
+    name?: true
+    phone?: true
+    email?: true
+    preferred_date?: true
+    comment?: true
+    created_at?: true
+  }
+
+  export type ServiceBookingCountAggregateInputType = {
+    id?: true
+    service_type?: true
+    name?: true
+    phone?: true
+    email?: true
+    preferred_date?: true
+    comment?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type ServiceBookingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ServiceBooking to aggregate.
+     */
+    where?: ServiceBookingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceBookings to fetch.
+     */
+    orderBy?: ServiceBookingOrderByWithRelationInput | ServiceBookingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ServiceBookingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceBookings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceBookings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ServiceBookings
+    **/
+    _count?: true | ServiceBookingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ServiceBookingAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ServiceBookingSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ServiceBookingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ServiceBookingMaxAggregateInputType
+  }
+
+  export type GetServiceBookingAggregateType<T extends ServiceBookingAggregateArgs> = {
+        [P in keyof T & keyof AggregateServiceBooking]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateServiceBooking[P]>
+      : GetScalarType<T[P], AggregateServiceBooking[P]>
+  }
+
+
+
+
+  export type ServiceBookingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ServiceBookingWhereInput
+    orderBy?: ServiceBookingOrderByWithAggregationInput | ServiceBookingOrderByWithAggregationInput[]
+    by: ServiceBookingScalarFieldEnum[] | ServiceBookingScalarFieldEnum
+    having?: ServiceBookingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ServiceBookingCountAggregateInputType | true
+    _avg?: ServiceBookingAvgAggregateInputType
+    _sum?: ServiceBookingSumAggregateInputType
+    _min?: ServiceBookingMinAggregateInputType
+    _max?: ServiceBookingMaxAggregateInputType
+  }
+
+  export type ServiceBookingGroupByOutputType = {
+    id: bigint
+    service_type: string
+    name: string
+    phone: string
+    email: string | null
+    preferred_date: string
+    comment: string | null
+    created_at: Date
+    _count: ServiceBookingCountAggregateOutputType | null
+    _avg: ServiceBookingAvgAggregateOutputType | null
+    _sum: ServiceBookingSumAggregateOutputType | null
+    _min: ServiceBookingMinAggregateOutputType | null
+    _max: ServiceBookingMaxAggregateOutputType | null
+  }
+
+  type GetServiceBookingGroupByPayload<T extends ServiceBookingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ServiceBookingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ServiceBookingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ServiceBookingGroupByOutputType[P]>
+            : GetScalarType<T[P], ServiceBookingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ServiceBookingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    service_type?: boolean
+    name?: boolean
+    phone?: boolean
+    email?: boolean
+    preferred_date?: boolean
+    comment?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["serviceBooking"]>
+
+  export type ServiceBookingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    service_type?: boolean
+    name?: boolean
+    phone?: boolean
+    email?: boolean
+    preferred_date?: boolean
+    comment?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["serviceBooking"]>
+
+  export type ServiceBookingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    service_type?: boolean
+    name?: boolean
+    phone?: boolean
+    email?: boolean
+    preferred_date?: boolean
+    comment?: boolean
+    created_at?: boolean
+  }, ExtArgs["result"]["serviceBooking"]>
+
+  export type ServiceBookingSelectScalar = {
+    id?: boolean
+    service_type?: boolean
+    name?: boolean
+    phone?: boolean
+    email?: boolean
+    preferred_date?: boolean
+    comment?: boolean
+    created_at?: boolean
+  }
+
+  export type ServiceBookingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "service_type" | "name" | "phone" | "email" | "preferred_date" | "comment" | "created_at", ExtArgs["result"]["serviceBooking"]>
+
+  export type $ServiceBookingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ServiceBooking"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: bigint
+      service_type: string
+      name: string
+      phone: string
+      email: string | null
+      preferred_date: string
+      comment: string | null
+      created_at: Date
+    }, ExtArgs["result"]["serviceBooking"]>
+    composites: {}
+  }
+
+  type ServiceBookingGetPayload<S extends boolean | null | undefined | ServiceBookingDefaultArgs> = $Result.GetResult<Prisma.$ServiceBookingPayload, S>
+
+  type ServiceBookingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ServiceBookingFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ServiceBookingCountAggregateInputType | true
+    }
+
+  export interface ServiceBookingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ServiceBooking'], meta: { name: 'ServiceBooking' } }
+    /**
+     * Find zero or one ServiceBooking that matches the filter.
+     * @param {ServiceBookingFindUniqueArgs} args - Arguments to find a ServiceBooking
+     * @example
+     * // Get one ServiceBooking
+     * const serviceBooking = await prisma.serviceBooking.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ServiceBookingFindUniqueArgs>(args: SelectSubset<T, ServiceBookingFindUniqueArgs<ExtArgs>>): Prisma__ServiceBookingClient<$Result.GetResult<Prisma.$ServiceBookingPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ServiceBooking that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ServiceBookingFindUniqueOrThrowArgs} args - Arguments to find a ServiceBooking
+     * @example
+     * // Get one ServiceBooking
+     * const serviceBooking = await prisma.serviceBooking.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ServiceBookingFindUniqueOrThrowArgs>(args: SelectSubset<T, ServiceBookingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ServiceBookingClient<$Result.GetResult<Prisma.$ServiceBookingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ServiceBooking that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceBookingFindFirstArgs} args - Arguments to find a ServiceBooking
+     * @example
+     * // Get one ServiceBooking
+     * const serviceBooking = await prisma.serviceBooking.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ServiceBookingFindFirstArgs>(args?: SelectSubset<T, ServiceBookingFindFirstArgs<ExtArgs>>): Prisma__ServiceBookingClient<$Result.GetResult<Prisma.$ServiceBookingPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ServiceBooking that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceBookingFindFirstOrThrowArgs} args - Arguments to find a ServiceBooking
+     * @example
+     * // Get one ServiceBooking
+     * const serviceBooking = await prisma.serviceBooking.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ServiceBookingFindFirstOrThrowArgs>(args?: SelectSubset<T, ServiceBookingFindFirstOrThrowArgs<ExtArgs>>): Prisma__ServiceBookingClient<$Result.GetResult<Prisma.$ServiceBookingPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ServiceBookings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceBookingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ServiceBookings
+     * const serviceBookings = await prisma.serviceBooking.findMany()
+     * 
+     * // Get first 10 ServiceBookings
+     * const serviceBookings = await prisma.serviceBooking.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const serviceBookingWithIdOnly = await prisma.serviceBooking.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ServiceBookingFindManyArgs>(args?: SelectSubset<T, ServiceBookingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceBookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ServiceBooking.
+     * @param {ServiceBookingCreateArgs} args - Arguments to create a ServiceBooking.
+     * @example
+     * // Create one ServiceBooking
+     * const ServiceBooking = await prisma.serviceBooking.create({
+     *   data: {
+     *     // ... data to create a ServiceBooking
+     *   }
+     * })
+     * 
+     */
+    create<T extends ServiceBookingCreateArgs>(args: SelectSubset<T, ServiceBookingCreateArgs<ExtArgs>>): Prisma__ServiceBookingClient<$Result.GetResult<Prisma.$ServiceBookingPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ServiceBookings.
+     * @param {ServiceBookingCreateManyArgs} args - Arguments to create many ServiceBookings.
+     * @example
+     * // Create many ServiceBookings
+     * const serviceBooking = await prisma.serviceBooking.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ServiceBookingCreateManyArgs>(args?: SelectSubset<T, ServiceBookingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ServiceBookings and returns the data saved in the database.
+     * @param {ServiceBookingCreateManyAndReturnArgs} args - Arguments to create many ServiceBookings.
+     * @example
+     * // Create many ServiceBookings
+     * const serviceBooking = await prisma.serviceBooking.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ServiceBookings and only return the `id`
+     * const serviceBookingWithIdOnly = await prisma.serviceBooking.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ServiceBookingCreateManyAndReturnArgs>(args?: SelectSubset<T, ServiceBookingCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceBookingPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ServiceBooking.
+     * @param {ServiceBookingDeleteArgs} args - Arguments to delete one ServiceBooking.
+     * @example
+     * // Delete one ServiceBooking
+     * const ServiceBooking = await prisma.serviceBooking.delete({
+     *   where: {
+     *     // ... filter to delete one ServiceBooking
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ServiceBookingDeleteArgs>(args: SelectSubset<T, ServiceBookingDeleteArgs<ExtArgs>>): Prisma__ServiceBookingClient<$Result.GetResult<Prisma.$ServiceBookingPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ServiceBooking.
+     * @param {ServiceBookingUpdateArgs} args - Arguments to update one ServiceBooking.
+     * @example
+     * // Update one ServiceBooking
+     * const serviceBooking = await prisma.serviceBooking.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ServiceBookingUpdateArgs>(args: SelectSubset<T, ServiceBookingUpdateArgs<ExtArgs>>): Prisma__ServiceBookingClient<$Result.GetResult<Prisma.$ServiceBookingPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ServiceBookings.
+     * @param {ServiceBookingDeleteManyArgs} args - Arguments to filter ServiceBookings to delete.
+     * @example
+     * // Delete a few ServiceBookings
+     * const { count } = await prisma.serviceBooking.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ServiceBookingDeleteManyArgs>(args?: SelectSubset<T, ServiceBookingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ServiceBookings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceBookingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ServiceBookings
+     * const serviceBooking = await prisma.serviceBooking.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ServiceBookingUpdateManyArgs>(args: SelectSubset<T, ServiceBookingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ServiceBookings and returns the data updated in the database.
+     * @param {ServiceBookingUpdateManyAndReturnArgs} args - Arguments to update many ServiceBookings.
+     * @example
+     * // Update many ServiceBookings
+     * const serviceBooking = await prisma.serviceBooking.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ServiceBookings and only return the `id`
+     * const serviceBookingWithIdOnly = await prisma.serviceBooking.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ServiceBookingUpdateManyAndReturnArgs>(args: SelectSubset<T, ServiceBookingUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceBookingPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ServiceBooking.
+     * @param {ServiceBookingUpsertArgs} args - Arguments to update or create a ServiceBooking.
+     * @example
+     * // Update or create a ServiceBooking
+     * const serviceBooking = await prisma.serviceBooking.upsert({
+     *   create: {
+     *     // ... data to create a ServiceBooking
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ServiceBooking we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ServiceBookingUpsertArgs>(args: SelectSubset<T, ServiceBookingUpsertArgs<ExtArgs>>): Prisma__ServiceBookingClient<$Result.GetResult<Prisma.$ServiceBookingPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ServiceBookings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceBookingCountArgs} args - Arguments to filter ServiceBookings to count.
+     * @example
+     * // Count the number of ServiceBookings
+     * const count = await prisma.serviceBooking.count({
+     *   where: {
+     *     // ... the filter for the ServiceBookings we want to count
+     *   }
+     * })
+    **/
+    count<T extends ServiceBookingCountArgs>(
+      args?: Subset<T, ServiceBookingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ServiceBookingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ServiceBooking.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceBookingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ServiceBookingAggregateArgs>(args: Subset<T, ServiceBookingAggregateArgs>): Prisma.PrismaPromise<GetServiceBookingAggregateType<T>>
+
+    /**
+     * Group by ServiceBooking.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceBookingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ServiceBookingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ServiceBookingGroupByArgs['orderBy'] }
+        : { orderBy?: ServiceBookingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ServiceBookingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetServiceBookingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ServiceBooking model
+   */
+  readonly fields: ServiceBookingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ServiceBooking.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ServiceBookingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ServiceBooking model
+   */
+  interface ServiceBookingFieldRefs {
+    readonly id: FieldRef<"ServiceBooking", 'BigInt'>
+    readonly service_type: FieldRef<"ServiceBooking", 'String'>
+    readonly name: FieldRef<"ServiceBooking", 'String'>
+    readonly phone: FieldRef<"ServiceBooking", 'String'>
+    readonly email: FieldRef<"ServiceBooking", 'String'>
+    readonly preferred_date: FieldRef<"ServiceBooking", 'String'>
+    readonly comment: FieldRef<"ServiceBooking", 'String'>
+    readonly created_at: FieldRef<"ServiceBooking", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ServiceBooking findUnique
+   */
+  export type ServiceBookingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceBooking
+     */
+    select?: ServiceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceBooking
+     */
+    omit?: ServiceBookingOmit<ExtArgs> | null
+    /**
+     * Filter, which ServiceBooking to fetch.
+     */
+    where: ServiceBookingWhereUniqueInput
+  }
+
+  /**
+   * ServiceBooking findUniqueOrThrow
+   */
+  export type ServiceBookingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceBooking
+     */
+    select?: ServiceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceBooking
+     */
+    omit?: ServiceBookingOmit<ExtArgs> | null
+    /**
+     * Filter, which ServiceBooking to fetch.
+     */
+    where: ServiceBookingWhereUniqueInput
+  }
+
+  /**
+   * ServiceBooking findFirst
+   */
+  export type ServiceBookingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceBooking
+     */
+    select?: ServiceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceBooking
+     */
+    omit?: ServiceBookingOmit<ExtArgs> | null
+    /**
+     * Filter, which ServiceBooking to fetch.
+     */
+    where?: ServiceBookingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceBookings to fetch.
+     */
+    orderBy?: ServiceBookingOrderByWithRelationInput | ServiceBookingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ServiceBookings.
+     */
+    cursor?: ServiceBookingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceBookings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceBookings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ServiceBookings.
+     */
+    distinct?: ServiceBookingScalarFieldEnum | ServiceBookingScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceBooking findFirstOrThrow
+   */
+  export type ServiceBookingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceBooking
+     */
+    select?: ServiceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceBooking
+     */
+    omit?: ServiceBookingOmit<ExtArgs> | null
+    /**
+     * Filter, which ServiceBooking to fetch.
+     */
+    where?: ServiceBookingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceBookings to fetch.
+     */
+    orderBy?: ServiceBookingOrderByWithRelationInput | ServiceBookingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ServiceBookings.
+     */
+    cursor?: ServiceBookingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceBookings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceBookings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ServiceBookings.
+     */
+    distinct?: ServiceBookingScalarFieldEnum | ServiceBookingScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceBooking findMany
+   */
+  export type ServiceBookingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceBooking
+     */
+    select?: ServiceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceBooking
+     */
+    omit?: ServiceBookingOmit<ExtArgs> | null
+    /**
+     * Filter, which ServiceBookings to fetch.
+     */
+    where?: ServiceBookingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceBookings to fetch.
+     */
+    orderBy?: ServiceBookingOrderByWithRelationInput | ServiceBookingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ServiceBookings.
+     */
+    cursor?: ServiceBookingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceBookings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceBookings.
+     */
+    skip?: number
+    distinct?: ServiceBookingScalarFieldEnum | ServiceBookingScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceBooking create
+   */
+  export type ServiceBookingCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceBooking
+     */
+    select?: ServiceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceBooking
+     */
+    omit?: ServiceBookingOmit<ExtArgs> | null
+    /**
+     * The data needed to create a ServiceBooking.
+     */
+    data: XOR<ServiceBookingCreateInput, ServiceBookingUncheckedCreateInput>
+  }
+
+  /**
+   * ServiceBooking createMany
+   */
+  export type ServiceBookingCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ServiceBookings.
+     */
+    data: ServiceBookingCreateManyInput | ServiceBookingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ServiceBooking createManyAndReturn
+   */
+  export type ServiceBookingCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceBooking
+     */
+    select?: ServiceBookingSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceBooking
+     */
+    omit?: ServiceBookingOmit<ExtArgs> | null
+    /**
+     * The data used to create many ServiceBookings.
+     */
+    data: ServiceBookingCreateManyInput | ServiceBookingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ServiceBooking update
+   */
+  export type ServiceBookingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceBooking
+     */
+    select?: ServiceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceBooking
+     */
+    omit?: ServiceBookingOmit<ExtArgs> | null
+    /**
+     * The data needed to update a ServiceBooking.
+     */
+    data: XOR<ServiceBookingUpdateInput, ServiceBookingUncheckedUpdateInput>
+    /**
+     * Choose, which ServiceBooking to update.
+     */
+    where: ServiceBookingWhereUniqueInput
+  }
+
+  /**
+   * ServiceBooking updateMany
+   */
+  export type ServiceBookingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ServiceBookings.
+     */
+    data: XOR<ServiceBookingUpdateManyMutationInput, ServiceBookingUncheckedUpdateManyInput>
+    /**
+     * Filter which ServiceBookings to update
+     */
+    where?: ServiceBookingWhereInput
+    /**
+     * Limit how many ServiceBookings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ServiceBooking updateManyAndReturn
+   */
+  export type ServiceBookingUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceBooking
+     */
+    select?: ServiceBookingSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceBooking
+     */
+    omit?: ServiceBookingOmit<ExtArgs> | null
+    /**
+     * The data used to update ServiceBookings.
+     */
+    data: XOR<ServiceBookingUpdateManyMutationInput, ServiceBookingUncheckedUpdateManyInput>
+    /**
+     * Filter which ServiceBookings to update
+     */
+    where?: ServiceBookingWhereInput
+    /**
+     * Limit how many ServiceBookings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ServiceBooking upsert
+   */
+  export type ServiceBookingUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceBooking
+     */
+    select?: ServiceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceBooking
+     */
+    omit?: ServiceBookingOmit<ExtArgs> | null
+    /**
+     * The filter to search for the ServiceBooking to update in case it exists.
+     */
+    where: ServiceBookingWhereUniqueInput
+    /**
+     * In case the ServiceBooking found by the `where` argument doesn't exist, create a new ServiceBooking with this data.
+     */
+    create: XOR<ServiceBookingCreateInput, ServiceBookingUncheckedCreateInput>
+    /**
+     * In case the ServiceBooking was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ServiceBookingUpdateInput, ServiceBookingUncheckedUpdateInput>
+  }
+
+  /**
+   * ServiceBooking delete
+   */
+  export type ServiceBookingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceBooking
+     */
+    select?: ServiceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceBooking
+     */
+    omit?: ServiceBookingOmit<ExtArgs> | null
+    /**
+     * Filter which ServiceBooking to delete.
+     */
+    where: ServiceBookingWhereUniqueInput
+  }
+
+  /**
+   * ServiceBooking deleteMany
+   */
+  export type ServiceBookingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ServiceBookings to delete
+     */
+    where?: ServiceBookingWhereInput
+    /**
+     * Limit how many ServiceBookings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ServiceBooking without action
+   */
+  export type ServiceBookingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceBooking
+     */
+    select?: ServiceBookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ServiceBooking
+     */
+    omit?: ServiceBookingOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Model Users
    */
 
@@ -10511,6 +11670,20 @@ export namespace Prisma {
   export type StatusesTypesScalarFieldEnum = (typeof StatusesTypesScalarFieldEnum)[keyof typeof StatusesTypesScalarFieldEnum]
 
 
+  export const ServiceBookingScalarFieldEnum: {
+    id: 'id',
+    service_type: 'service_type',
+    name: 'name',
+    phone: 'phone',
+    email: 'email',
+    preferred_date: 'preferred_date',
+    comment: 'comment',
+    created_at: 'created_at'
+  };
+
+  export type ServiceBookingScalarFieldEnum = (typeof ServiceBookingScalarFieldEnum)[keyof typeof ServiceBookingScalarFieldEnum]
+
+
   export const UsersScalarFieldEnum: {
     id: 'id',
     username: 'username',
@@ -11017,6 +12190,75 @@ export namespace Prisma {
     status?: StringWithAggregatesFilter<"StatusesTypes"> | string
   }
 
+  export type ServiceBookingWhereInput = {
+    AND?: ServiceBookingWhereInput | ServiceBookingWhereInput[]
+    OR?: ServiceBookingWhereInput[]
+    NOT?: ServiceBookingWhereInput | ServiceBookingWhereInput[]
+    id?: BigIntFilter<"ServiceBooking"> | bigint | number
+    service_type?: StringFilter<"ServiceBooking"> | string
+    name?: StringFilter<"ServiceBooking"> | string
+    phone?: StringFilter<"ServiceBooking"> | string
+    email?: StringNullableFilter<"ServiceBooking"> | string | null
+    preferred_date?: StringFilter<"ServiceBooking"> | string
+    comment?: StringNullableFilter<"ServiceBooking"> | string | null
+    created_at?: DateTimeFilter<"ServiceBooking"> | Date | string
+  }
+
+  export type ServiceBookingOrderByWithRelationInput = {
+    id?: SortOrder
+    service_type?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    email?: SortOrderInput | SortOrder
+    preferred_date?: SortOrder
+    comment?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+  }
+
+  export type ServiceBookingWhereUniqueInput = Prisma.AtLeast<{
+    id?: bigint | number
+    AND?: ServiceBookingWhereInput | ServiceBookingWhereInput[]
+    OR?: ServiceBookingWhereInput[]
+    NOT?: ServiceBookingWhereInput | ServiceBookingWhereInput[]
+    service_type?: StringFilter<"ServiceBooking"> | string
+    name?: StringFilter<"ServiceBooking"> | string
+    phone?: StringFilter<"ServiceBooking"> | string
+    email?: StringNullableFilter<"ServiceBooking"> | string | null
+    preferred_date?: StringFilter<"ServiceBooking"> | string
+    comment?: StringNullableFilter<"ServiceBooking"> | string | null
+    created_at?: DateTimeFilter<"ServiceBooking"> | Date | string
+  }, "id">
+
+  export type ServiceBookingOrderByWithAggregationInput = {
+    id?: SortOrder
+    service_type?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    email?: SortOrderInput | SortOrder
+    preferred_date?: SortOrder
+    comment?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    _count?: ServiceBookingCountOrderByAggregateInput
+    _avg?: ServiceBookingAvgOrderByAggregateInput
+    _max?: ServiceBookingMaxOrderByAggregateInput
+    _min?: ServiceBookingMinOrderByAggregateInput
+    _sum?: ServiceBookingSumOrderByAggregateInput
+  }
+
+  export type ServiceBookingScalarWhereWithAggregatesInput = {
+    AND?: ServiceBookingScalarWhereWithAggregatesInput | ServiceBookingScalarWhereWithAggregatesInput[]
+    OR?: ServiceBookingScalarWhereWithAggregatesInput[]
+    NOT?: ServiceBookingScalarWhereWithAggregatesInput | ServiceBookingScalarWhereWithAggregatesInput[]
+    id?: BigIntWithAggregatesFilter<"ServiceBooking"> | bigint | number
+    service_type?: StringWithAggregatesFilter<"ServiceBooking"> | string
+    name?: StringWithAggregatesFilter<"ServiceBooking"> | string
+    phone?: StringWithAggregatesFilter<"ServiceBooking"> | string
+    email?: StringNullableWithAggregatesFilter<"ServiceBooking"> | string | null
+    preferred_date?: StringWithAggregatesFilter<"ServiceBooking"> | string
+    comment?: StringNullableWithAggregatesFilter<"ServiceBooking"> | string | null
+    created_at?: DateTimeWithAggregatesFilter<"ServiceBooking"> | Date | string
+  }
+
   export type UsersWhereInput = {
     AND?: UsersWhereInput | UsersWhereInput[]
     OR?: UsersWhereInput[]
@@ -11439,6 +12681,83 @@ export namespace Prisma {
   export type StatusesTypesUncheckedUpdateManyInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     status?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ServiceBookingCreateInput = {
+    id?: bigint | number
+    service_type: string
+    name: string
+    phone: string
+    email?: string | null
+    preferred_date: string
+    comment?: string | null
+    created_at?: Date | string
+  }
+
+  export type ServiceBookingUncheckedCreateInput = {
+    id?: bigint | number
+    service_type: string
+    name: string
+    phone: string
+    email?: string | null
+    preferred_date: string
+    comment?: string | null
+    created_at?: Date | string
+  }
+
+  export type ServiceBookingUpdateInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    service_type?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_date?: StringFieldUpdateOperationsInput | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceBookingUncheckedUpdateInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    service_type?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_date?: StringFieldUpdateOperationsInput | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceBookingCreateManyInput = {
+    id?: bigint | number
+    service_type: string
+    name: string
+    phone: string
+    email?: string | null
+    preferred_date: string
+    comment?: string | null
+    created_at?: Date | string
+  }
+
+  export type ServiceBookingUpdateManyMutationInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    service_type?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_date?: StringFieldUpdateOperationsInput | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceBookingUncheckedUpdateManyInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    service_type?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    preferred_date?: StringFieldUpdateOperationsInput | string
+    comment?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UsersCreateInput = {
@@ -11967,6 +13286,47 @@ export namespace Prisma {
   }
 
   export type StatusesTypesSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type ServiceBookingCountOrderByAggregateInput = {
+    id?: SortOrder
+    service_type?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    preferred_date?: SortOrder
+    comment?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type ServiceBookingAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type ServiceBookingMaxOrderByAggregateInput = {
+    id?: SortOrder
+    service_type?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    preferred_date?: SortOrder
+    comment?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type ServiceBookingMinOrderByAggregateInput = {
+    id?: SortOrder
+    service_type?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    email?: SortOrder
+    preferred_date?: SortOrder
+    comment?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type ServiceBookingSumOrderByAggregateInput = {
     id?: SortOrder
   }
 

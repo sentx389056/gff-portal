@@ -5,6 +5,8 @@ import {Separator} from "./ui/separator";
 
 
 export default function Footer() {
+    const currentYear = new Date().getFullYear();
+
     return (
         <footer className="text-md text-slate-300 mb-0">
             {/* верхний блок */}
@@ -112,7 +114,7 @@ export default function Footer() {
             {/* нижний блок */}
             <div className="w-full bg-gray-800 flex md:flex-row flex-col gap-6 justify-between items-start py-5 px-12">
                 <p>
-                    © ФГБУК «Государственный фонд кинофильмов Российской Федерации», 2025г.
+                    © ФГБУК «Государственный фонд кинофильмов Российской Федерации», {currentYear}г.
                 </p>
                 <Link href="https://illusion-cinema.ru/">
                     <Image

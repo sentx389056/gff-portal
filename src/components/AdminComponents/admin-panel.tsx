@@ -21,16 +21,18 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Activity, File, Newspaper, Users2 } from "lucide-react";
+import { Activity, File, Newspaper, Users2, CalendarCheck } from "lucide-react";
 import AdminDocuments from "@/components/AdminComponents/admin-documents";
 import AdminNews from "@/components/AdminComponents/admin-news";
 import AdminUsers from "@/components/AdminComponents/admin-users";
 import AdminLogs from "@/components/AdminComponents/admin-logs";
+import AdminBookings from "@/components/AdminComponents/admin-bookings";
 
 const adminItems = [
     { title: "Новости", key: "news", icon: Newspaper },
     { title: "Документы", key: "documents", icon: File },
     { title: "Пользователи", key: "users", icon: Users2 },
+    { title: "Записи на услуги", key: "bookings", icon: CalendarCheck },
     { title: "Журнал событий", key: "activity", icon: Activity },
 ];
 
@@ -42,6 +44,7 @@ function AdminPanelContent() {
             case "news": return <AdminNews />;
             case "documents": return <AdminDocuments />;
             case "users": return <AdminUsers />;
+            case "bookings": return <AdminBookings />;
             case "activity": return <AdminLogs />;
             default: return <AdminNews />;
         }
@@ -104,7 +107,7 @@ export default function AdminPanel() {
                 <DialogTrigger asChild>
                     <Button>Панель управления</Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-7xl h-[75vh] p-0 flex flex-col overflow-hidden">
+                <DialogContent className="p-0 flex flex-col overflow-hidden" style={{ width: '90vw', maxWidth: 'none', height: '90vh' }}>
                     <AdminPanelContent />
                 </DialogContent>
             </Dialog>
