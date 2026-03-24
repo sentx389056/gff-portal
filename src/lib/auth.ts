@@ -1,57 +1,9 @@
 // lib/auth.ts
 import CredentialsProvider from "next-auth/providers/credentials"
+import type { NextAuthOptions } from "next-auth"
+import type { JWT } from "next-auth/jwt"
 import { Client } from "ldapts"
 import { PrismaClient } from "../../prisma/generated/prisma"
-
-// Собственный тип, совместимый с NextAuth (расширенный)
-export interface AuthUser {
-    id: string;
-    name: string;
-    email: string;
-    username: string;
-    role: string;
-}
-
-export interface AuthToken {
-    id?: string;
-    username?: string;
-    role?: string;
-    [key: string]: string | undefined; // ← Исправлено: any → string | undefined
-}
-
-export interface AuthSession {
-    user: AuthUser;
-}
-
-export interface AuthOptions {
-    providers: Array<unknown>; // ← Исправлено: any → unknown
-    callbacks?: {
-        jwt?: (params: {
-            token: AuthToken;
-            user?: AuthUser;
-            account?: unknown; // ← Исправлено: any → unknown
-            profile?: unknown; // ← Исправлено: any → unknown
-            isNewUser?: boolean;
-        }) => AuthToken;
-        session?: (params: {
-            session: AuthSession;
-            token: AuthToken;
-            user?: unknown; // ← Исправлено: any → unknown
-        }) => AuthSession;
-    };
-    session?: {
-        strategy?: "jwt" | "database";
-        maxAge?: number;
-    };
-    pages?: {
-        signIn?: string;
-        signOut?: string;
-        error?: string;
-        verifyRequest?: string;
-        newUser?: string;
-    };
-    secret?: string;
-}
 
 // Singleton Prisma клиент
 let prismaInstance: PrismaClient | null = null;
@@ -97,7 +49,7 @@ async function ldapAuthenticate(username: string, password: string): Promise<{ d
     }
 }
 
-export const authOptions: AuthOptions = {
+export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
             name: "Credentials",
@@ -105,7 +57,7 @@ export const authOptions: AuthOptions = {
                 username: { label: "Username", type: "text", placeholder: "jurtsev.m" },
                 password: { label: "Password", type: "password" },
             },
-            async authorize(credentials: { username: string; password: string } | null): Promise<AuthUser | null> {
+            async authorize(credentials) {
                 if (!credentials?.username || !credentials?.password) {
                     throw new Error("Логин и пароль обязательны")
                 }
@@ -113,27 +65,24 @@ export const authOptions: AuthOptions = {
                 const prismaClient = getPrismaClient();
 
                 try {
-                    // Проверяем через AD
                     const adUser = await ldapAuthenticate(credentials.username, credentials.password);
 
                     if (!adUser) {
                         throw new Error("Неверный логин или пароль")
                     }
 
-                    // Ищем пользователя в локальной БД (для роли)
                     let dbUser = await prismaClient.users.findUnique({
                         where: { username: credentials.username },
                         select: { id: true, username: true, name: true, role: { select: { role: true } } },
                     });
 
-                    // Если пользователь первый раз — создаём запись с ролью user
                     if (!dbUser) {
                         dbUser = await prismaClient.users.create({
                             data: {
                                 username: credentials.username,
-                                password: "",          // пароль не используется
+                                password: "",
                                 name: adUser.displayName,
-                                role_id: 2n,           // user
+                                role_id: 2n,
                                 status_id: 1n,
                             },
                             select: { id: true, username: true, name: true, role: { select: { role: true } } },
@@ -160,29 +109,50 @@ export const authOptions: AuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, user }: { token: AuthToken; user?: AuthUser }): Promise<AuthToken> {
+        async jwt({ token, user }) {
             if (user) {
                 token.id = user.id
-                token.role = user.role
-                token.username = user.username
+                token.role = (user as { role?: string }).role
+                token.username = (user as { username?: string }).username
             }
             return token
         },
-        async session({ session, token }: { session: AuthSession; token: AuthToken }): Promise<AuthSession> {
-            if (session.user && token) {
-                session.user.id = token.id as string
-                session.user.role = token.role as string
-                session.user.username = token.username as string
+        async session({ session, token }: { session: import("next-auth").Session; token: JWT }) {
+            if (session.user) {
+                (session.user as { id?: string }).id = token.id as string
+                ;(session.user as { role?: string }).role = token.role as string
+                ;(session.user as { username?: string }).username = token.username as string
             }
             return session
         },
     },
     session: {
         strategy: "jwt",
-        maxAge: 60 * 60, // 1 час
+        maxAge: 60 * 60,
     },
     pages: {
-        signIn: "/",
+        signIn: "/auth",
     },
     secret: process.env.NEXTAUTH_SECRET,
 }
+
+// Экспортируем типы для совместимости с остальным кодом
+export type AuthUser = {
+    id: string;
+    name: string;
+    email: string;
+    username: string;
+    role: string;
+}
+
+export type AuthToken = JWT & {
+    id?: string;
+    username?: string;
+    role?: string;
+}
+
+export type AuthSession = import("next-auth").Session & {
+    user: AuthUser;
+}
+
+export type AuthOptions = NextAuthOptions;
